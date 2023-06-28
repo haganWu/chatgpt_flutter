@@ -1,7 +1,7 @@
 import 'package:chatgpt_flutter/pages/conversation_page.dart';
 import 'package:flutter/material.dart';
-import 'package:login_sdk/dao/login_dao.dart';
 import 'package:login_sdk/util/navigator_util.dart';
+import 'package:openai_flutter/http/ai_config.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -11,30 +11,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  get _logoutBtn => ElevatedButton(
-      onPressed: () {
-        LoginDao.logout();
-      },
-      child: const Text('登出'));
 
-  // get _listView => ListView(
-  //       children: [
-  //         _logoutBtn,
-  //         const Text(
-  //           '首页',
-  //           style: TextStyle(fontSize: 30, color: Colors.deepOrangeAccent),
-  //         )
-  //       ],
-  //     );
+  @override
+  void initState() {
+    super.initState();
+    _initConfig();
+  }
 
   @override
   Widget build(BuildContext context) {
     // 更新导航器上下文context
     NavigatorUtil.updateContext(context);
     return const ConversationPage();
-    //   Scaffold(
-    //   appBar: AppBar(title: const Text('ChatGPT')),
-    //   body: _listView,
-    // );
+  }
+
+  void _initConfig() {
+    AiConfigBuilder.init(apiKey: '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',proxy:'10.1.37.84:54484');
   }
 }
