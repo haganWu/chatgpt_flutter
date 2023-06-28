@@ -11,7 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
     super.initState();
@@ -22,10 +21,26 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // 更新导航器上下文context
     NavigatorUtil.updateContext(context);
-    return const ConversationPage();
+    return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(36),
+          child: AppBar(
+            title: const Text('ChatGPT', style: TextStyle(fontSize: 12)),
+          )),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [ElevatedButton(onPressed: _jumpConversationPage, child: const Text('CreateChat'))],
+        ),
+      ),
+    );
   }
 
   void _initConfig() {
-    AiConfigBuilder.init(apiKey: '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',proxy:'10.1.37.84:54484');
+    AiConfigBuilder.init(apiKey: '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', proxy: '10.1.37.84:54484');
+  }
+
+  void _jumpConversationPage() {
+    NavigatorUtil.push(context, const ConversationPage());
   }
 }

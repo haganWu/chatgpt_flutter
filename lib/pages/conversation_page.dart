@@ -15,6 +15,7 @@ class ConversationPage extends StatefulWidget {
 
 class _ConversationPageState extends State<ConversationPage> {
   String _inputMessage = '';
+  bool _sendBtnEnable = true;
   final List<MessageModel> _messageList = [];
   late ChatController chatController;
 
@@ -26,9 +27,19 @@ class _ConversationPageState extends State<ConversationPage> {
         },
       ));
 
+  get _appBar => PreferredSize(
+      preferredSize: const Size.fromHeight(36),
+      child: AppBar(
+        centerTitle: true,
+        title: Text(_title, style: const TextStyle(fontSize: 12)),
+      ));
+
+  String get _title => _sendBtnEnable ? '与ChatGPT会话' : '对方正在输入...';
+
   _inputWidget() {
     return MessageInputWidget(
       hint: '请输入内容',
+      enable: _sendBtnEnable,
       onChanged: (text) => _inputMessage = text,
       onSend: _onSend,
     );
@@ -47,13 +58,13 @@ class _ConversationPageState extends State<ConversationPage> {
   @override
   void dispose() {
     super.dispose();
-    chatController.dispose();
+    // chatController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('ChatGPT会话')),
+      appBar: _appBar,
       body: Column(
         children: [
           _chatList,
@@ -73,6 +84,9 @@ class _ConversationPageState extends State<ConversationPage> {
       ownerName: 'HaganWu',
     ));
 
+    setState(() {
+      _sendBtnEnable = false;
+    });
     String? response;
     try {
       response = await CompletionDao.createCompletions(prompt: _inputMessage);
@@ -89,5 +103,8 @@ class _ConversationPageState extends State<ConversationPage> {
       ownerName: 'ChatGPT',
       createdAt: DateTime.now().millisecondsSinceEpoch,
     ));
+    setState(() {
+      _sendBtnEnable = true;
+    });
   }
 }

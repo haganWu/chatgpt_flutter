@@ -40,13 +40,12 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
   get _sendBtn => Container(
         margin: const EdgeInsets.only(left: 10),
         decoration: BoxDecoration(
-          color: Colors.blue,
+          color: widget.enable ? Colors.blue : Colors.blueGrey,
           borderRadius: BorderRadius.circular(6),
         ),
-        padding: const EdgeInsets.only(left: 8,right: 8,top: 4,bottom: 4),
-        // 水波纹按钮
+        padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
         child: InkWell(
-          onTap: _onSend,
+          onTap: widget.enable ? _onSend : null,
           child: const Text('发送', style: TextStyle(color: Colors.white, fontSize: 10)),
         ),
       );
