@@ -26,6 +26,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _initConfig() {
-    AiConfigBuilder.init(apiKey: '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',proxy:'10.1.37.84:54484');
+    AiConfigBuilder.init(apiKey: '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',proxy:'10.1.37.84:54484');
   }
 }

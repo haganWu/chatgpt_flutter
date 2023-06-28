@@ -57,6 +57,7 @@ class _ConversationPageState extends State<ConversationPage> {
       body: Column(
         children: [
           _chatList,
+          const SizedBox(height: 6),
           _inputWidget(),
         ],
       ),
@@ -72,13 +73,13 @@ class _ConversationPageState extends State<ConversationPage> {
       ownerName: 'HaganWu',
     ));
 
-    String? response = '';
+    String? response;
     try {
       response = await CompletionDao.createCompletions(prompt: _inputMessage);
       response = response?.replaceFirst("\n\n", "");
       AiLogger.log(message: 'response:$response', tag: 'conversation onSend');
     } catch (e) {
-      AiLogger.log(message: 'response:$response', tag: 'conversation onSend');
+      AiLogger.log(message: 'response:${e.toString()}', tag: 'conversation onSend');
     }
     response ??= 'No Response';
     chatController.addMessage(MessageModel(
