@@ -35,6 +35,10 @@ dependencies:
     path: '../login_sdk'
   hi_download:
     path: '../hi_download'
+  chat_message:
+    path: '../chat_message'
+  openai_flutter:
+    path: '../openai_flutter'
 
 
   # The following adds the Cupertino Icons font to your application.
