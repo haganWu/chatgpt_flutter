@@ -18,6 +18,7 @@ class _ConversationPageState extends State<ConversationPage> {
   bool _sendBtnEnable = true;
   final List<MessageModel> _messageList = [];
   late ChatController chatController;
+  final CompletionDao completionDao = CompletionDao();
 
   get _chatList => Expanded(
           child: ChatListWidget(
@@ -41,7 +42,7 @@ class _ConversationPageState extends State<ConversationPage> {
       hint: '请输入内容',
       enable: _sendBtnEnable,
       onChanged: (text) => _inputMessage = text,
-      onSend: _onSend,
+      onSend: () => _onSend(_inputMessage),
     );
   }
 
@@ -75,36 +76,44 @@ class _ConversationPageState extends State<ConversationPage> {
     );
   }
 
-  void _onSend() async {
-    chatController.addMessage(MessageModel(
-      ownerType: OwnerType.sender,
-      content: _inputMessage,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-      avatar: 'https://o.devio.org/images/o_as/avatar/tx2.jpeg',
-      ownerName: 'HaganWu',
-    ));
+  // 不适用_inputMessage 是因为在结果回来之前_inputMessage可能会边
+  void _onSend(final String inputMessage) async {
+    chatController.addMessage(_genMessageModel(ownerType: OwnerType.sender, message: inputMessage));
 
     setState(() {
       _sendBtnEnable = false;
     });
     String? response;
     try {
-      response = await CompletionDao.createCompletions(prompt: _inputMessage);
+      response = await completionDao.createCompletions(prompt: inputMessage);
       response = response?.replaceFirst("\n\n", "");
       AiLogger.log(message: 'response:$response', tag: 'conversation onSend');
     } catch (e) {
       AiLogger.log(message: 'response:${e.toString()}', tag: 'conversation onSend');
     }
     response ??= 'No Response';
-    chatController.addMessage(MessageModel(
-      ownerType: OwnerType.receiver,
-      content: response,
-      avatar: 'https://o.devio.org/images/o_as/avatar/tx4.jpeg',
-      ownerName: 'ChatGPT',
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-    ));
+    chatController.addMessage(_genMessageModel(ownerType: OwnerType.receiver, message: response));
     setState(() {
       _sendBtnEnable = true;
     });
+  }
+
+  MessageModel _genMessageModel({required OwnerType ownerType, required String message}) {
+    String avatar, ownerName;
+    if(ownerType == OwnerType.sender){
+      avatar = 'https://o.devio.org/images/o_as/avatar/tx2.jpeg';
+      ownerName = 'HaganWu';
+    } else {
+      avatar = 'https://o.devio.org/images/o_as/avatar/tx4.jpeg';
+      ownerName = "ChatGPT";
+    }
+
+    return MessageModel(
+      ownerType: ownerType,
+      content: message,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      avatar: avatar,
+      ownerName: ownerName,
+    );
   }
 }
