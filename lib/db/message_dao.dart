@@ -31,7 +31,7 @@ class MessageDao implements IMessage, ITable {
   @override
   String tableName = "";
 
-  MessageDao(this.storage, this.cid) : tableName = tableNameByCid(cid) {
+  MessageDao({required this.storage, required this.cid}) : tableName = tableNameByCid(cid) {
     storage.db.execute('create table if not exists $tableName (id integer primary key autoincrement,content text'
         ',createdAt integer, ownerName text, ownerType text, avatar text)');
   }
