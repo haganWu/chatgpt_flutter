@@ -21,26 +21,23 @@ class _ConversationPageState extends State<ConversationPage> {
   String _inputMessage = '';
   bool _sendBtnEnable = true;
   late MessageDao messageDao;
-  final List<MessageModel> _messageList = [];
   late ChatController chatController;
-  final CompletionDao completionDao = CompletionDao();
+  late CompletionDao completionDao;
 
-  get _chatList =>
-      Expanded(
+  get _chatList => Expanded(
           child: ChatListWidget(
-            chatController: chatController,
-            onBubbleTap: (MessageModel messageModel, BuildContext ancestor) {
-              debugPrint('onBubbleLongPress - ${messageModel.content}');
-            },
-          ));
+        chatController: chatController,
+        onBubbleTap: (MessageModel messageModel, BuildContext ancestor) {
+          debugPrint('onBubbleLongPress - ${messageModel.content}');
+        },
+      ));
 
-  get _appBar =>
-      PreferredSize(
-          preferredSize: const Size.fromHeight(36),
-          child: AppBar(
-            centerTitle: true,
-            title: Text(_title, style: const TextStyle(fontSize: 12)),
-          ));
+  get _appBar => PreferredSize(
+      preferredSize: const Size.fromHeight(36),
+      child: AppBar(
+        centerTitle: true,
+        title: Text(_title, style: const TextStyle(fontSize: 12)),
+      ));
 
   String get _title => _sendBtnEnable ? '与ChatGPT会话' : '对方正在输入...';
 
@@ -56,24 +53,27 @@ class _ConversationPageState extends State<ConversationPage> {
   @override
   void initState() {
     super.initState();
+    _doInit();
     chatController = ChatController(
-      initialMessageList: _messageList,
+      initialMessageList: [],
       scrollController: ScrollController(),
       timePellet: 60,
     );
-    _doInit();
   }
 
   void _doInit() async {
     var dbManager = await HiDBManager.instance(dbName: HiDBManager.getAccountHash());
     // TODO fix cid
     messageDao = MessageDao(storage: dbManager, cid: 123);
+    // 加载历史对话信息
+    var list = await _loadAll();
+    chatController.loadMoreData(list);
+    completionDao = CompletionDao(messages: list);
   }
 
   void _addMessage(MessageModel model) {
     chatController.addMessage(model);
     messageDao.saveMessage(model);
-    _loadAll();
   }
 
   @override
@@ -130,17 +130,16 @@ class _ConversationPageState extends State<ConversationPage> {
     return MessageModel(
       ownerType: ownerType,
       content: message,
-      createdAt: DateTime
-          .now()
-          .millisecondsSinceEpoch,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
       avatar: avatar,
       ownerName: ownerName,
     );
   }
 
-  void _loadAll() async {
+  Future<List<MessageModel>> _loadAll() async {
     var list = await messageDao.getAllMessage();
     AiLogger.log(message: 'count: ${list.length}', tag: 'ConversationPage');
     AiLogger.log(message: '_loadAll: ${jsonEncode(list)}', tag: 'ConversationPage');
+    return list;
   }
 }
