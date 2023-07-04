@@ -23,6 +23,8 @@ class _ConversationPageState extends State<ConversationPage> {
   late MessageDao messageDao;
   late ChatController chatController;
   late CompletionDao completionDao;
+  final ScrollController _scrollController = ScrollController();
+  int pageIndex = 1;
 
   get _chatList => Expanded(
           child: ChatListWidget(
@@ -54,19 +56,26 @@ class _ConversationPageState extends State<ConversationPage> {
   void initState() {
     super.initState();
     _doInit();
-    chatController = ChatController(
-      initialMessageList: [],
-      scrollController: ScrollController(),
-      timePellet: 60,
-    );
   }
 
   void _doInit() async {
+    chatController = ChatController(
+      initialMessageList: [],
+      scrollController: _scrollController,
+      timePellet: 60,
+    );
+    // 下拉触发加载更多
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        AiLogger.log(message: "下拉触发加载更多", tag: "ConversationPage");
+        _loadData(loadMore: true);
+      }
+    });
     var dbManager = await HiDBManager.instance(dbName: HiDBManager.getAccountHash());
     // TODO fix cid
     messageDao = MessageDao(storage: dbManager, cid: 123);
     // 加载历史对话信息
-    var list = await _loadAll();
+    var list = await _loadData();
     chatController.loadMoreData(list);
     completionDao = CompletionDao(messages: list);
   }
@@ -136,10 +145,22 @@ class _ConversationPageState extends State<ConversationPage> {
     );
   }
 
-  Future<List<MessageModel>> _loadAll() async {
-    var list = await messageDao.getAllMessage();
+  Future<List<MessageModel>> _loadData({bool loadMore = false}) async {
+    if (loadMore) {
+      pageIndex++;
+    } else {
+      pageIndex = 1;
+    }
+    var list = await messageDao.getMessages(pageIndex: pageIndex, pageSize: 4);
     AiLogger.log(message: 'count: ${list.length}', tag: 'ConversationPage');
     AiLogger.log(message: '_loadAll: ${jsonEncode(list)}', tag: 'ConversationPage');
+    if (loadMore) {
+      if(list.isNotEmpty) {
+        chatController.loadMoreData(list);
+      } else {
+        pageIndex--;
+      }
+    }
     return list;
   }
 }

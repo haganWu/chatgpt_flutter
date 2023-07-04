@@ -60,7 +60,7 @@ class MessageDao implements IMessage, ITable {
   }
 
   @override
-  Future<List<MessageModel>> getMessages({int pageIndex = 1, int pageSize = 20}) async {
+  Future<List<MessageModel>> getMessages({int pageIndex = 1, int pageSize = 10}) async {
     var offset = (pageIndex - 1) * pageSize;
     var results = await storage.db.rawQuery('select * from $tableName order by id desc limit $pageSize offset $offset');
     var list = results.map((item) => MessageModel.fromJson(item)).toList();
