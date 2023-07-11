@@ -9,6 +9,7 @@ import 'package:chatgpt_flutter/db/message_dao.dart';
 import 'package:chatgpt_flutter/widget/message_input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
+import '../util/constants.dart';
 
 class ConversationPage extends StatefulWidget {
   const ConversationPage({Key? key}) : super(key: key);
@@ -129,11 +130,11 @@ class _ConversationPageState extends State<ConversationPage> {
   MessageModel _genMessageModel({required OwnerType ownerType, required String message}) {
     String avatar, ownerName;
     if (ownerType == OwnerType.sender) {
-      avatar = 'https://o.devio.org/images/o_as/avatar/tx2.jpeg';
-      ownerName = 'HaganWu';
+      avatar = Constants.senderIcon;
+      ownerName = Constants.senderName;
     } else {
-      avatar = 'https://o.devio.org/images/o_as/avatar/tx4.jpeg';
-      ownerName = "ChatGPT";
+      avatar = Constants.chatGPTIcon;
+      ownerName = Constants.chatGPTName;
     }
 
     return MessageModel(
