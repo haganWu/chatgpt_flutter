@@ -6,13 +6,16 @@ import 'package:chat_message/widget/chat_list_widget.dart';
 import 'package:chatgpt_flutter/dao/completion_dao.dart';
 import 'package:chatgpt_flutter/db/hi_db_manager.dart';
 import 'package:chatgpt_flutter/db/message_dao.dart';
+import 'package:chatgpt_flutter/models/conversation_model.dart';
 import 'package:chatgpt_flutter/widget/message_input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import '../util/constants.dart';
 
 class ConversationPage extends StatefulWidget {
-  const ConversationPage({Key? key}) : super(key: key);
+  final ConversationModel conversationModel;
+
+  const ConversationPage({Key? key, required this.conversationModel}) : super(key: key);
 
   @override
   State<ConversationPage> createState() => _ConversationPageState();
@@ -156,7 +159,7 @@ class _ConversationPageState extends State<ConversationPage> {
     AiLogger.log(message: 'count: ${list.length}', tag: 'ConversationPage');
     AiLogger.log(message: '_loadAll: ${jsonEncode(list)}', tag: 'ConversationPage');
     if (loadMore) {
-      if(list.isNotEmpty) {
+      if (list.isNotEmpty) {
         chatController.loadMoreData(list);
       } else {
         pageIndex--;

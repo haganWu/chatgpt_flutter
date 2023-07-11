@@ -1,7 +1,8 @@
-import 'package:chatgpt_flutter/pages/conversation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:login_sdk/util/navigator_util.dart';
 import 'package:openai_flutter/http/ai_config.dart';
+
+import 'conversation_list_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -27,12 +28,7 @@ class _HomePageState extends State<HomePage> {
           child: AppBar(
             title: const Text('ChatGPT', style: TextStyle(fontSize: 12)),
           )),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [ElevatedButton(onPressed: _jumpConversationPage, child: const Text('CreateChat'))],
-        ),
-      ),
+      body: const ConversationListPage(),
     );
   }
 
@@ -40,7 +36,4 @@ class _HomePageState extends State<HomePage> {
     AiConfigBuilder.init(apiKey: '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', proxy: '10.1.37.84:56288');
   }
 
-  void _jumpConversationPage() {
-    NavigatorUtil.push(context, const ConversationPage());
-  }
 }
