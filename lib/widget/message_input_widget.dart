@@ -16,23 +16,26 @@ class MessageInputWidget extends StatefulWidget {
 class _MessageInputWidgetState extends State<MessageInputWidget> {
   bool _showSend = false;
   final _controller = TextEditingController();
+  //键盘处理
+  final FocusNode _focusNode = FocusNode();
 
   get _input {
     return Expanded(
         child: TextField(
       onChanged: _onChanged,
       controller: _controller,
-      style: const TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w400),
+      focusNode: _focusNode,
+      style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w400),
       // 输入框样式
       decoration: InputDecoration(
           // 圆角
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(width: 0, style: BorderStyle.none)),
           filled: true,
           // 输入框样式的大小约束
-          constraints: const BoxConstraints(maxHeight: 30),
+          constraints: const BoxConstraints(maxHeight: 36),
           fillColor: Colors.white,
           contentPadding: const EdgeInsets.only(left: 10),
-          hintStyle: const TextStyle(fontSize: 12),
+          hintStyle: const TextStyle(fontSize: 14),
           hintText: widget.hint),
     ));
   }
@@ -43,20 +46,20 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
           color: widget.enable ? Colors.blue : Colors.blueGrey,
           borderRadius: BorderRadius.circular(6),
         ),
-        padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
+        padding: const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 6),
         child: InkWell(
           onTap: widget.enable ? _onSend : null,
-          child: const Text('发送', style: TextStyle(color: Colors.white, fontSize: 10)),
+          child: const Text('发送', style: TextStyle(color: Colors.white, fontSize: 12)),
         ),
       );
 
   @override
   Widget build(BuildContext context) {
     // ios刘海屏，底部有间距
-    var bottom = MediaQuery.of(context).padding.bottom + 4;
+    var bottom = MediaQuery.of(context).padding.bottom + 6;
     return Container(
-      height: 38,
-      padding: EdgeInsets.only(left: 12, right: 12, top: 4, bottom: bottom),
+      height: 44,
+      padding: EdgeInsets.only(left: 12, right: 12, top: 6, bottom: bottom),
       decoration: BoxDecoration(
         color: Colors.grey.withOpacity(0.2),
       ),
@@ -79,6 +82,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
     if (widget.onSend != null) {
       widget.onSend!();
       _controller.clear();
+      _focusNode.unfocus();
       setState(() {
         _showSend = false;
       });
