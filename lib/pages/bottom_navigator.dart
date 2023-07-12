@@ -16,7 +16,7 @@ class BottomNavigator extends StatefulWidget {
 class _BottomNavigatorState extends State<BottomNavigator> {
   final PageController _controller = PageController(initialPage: 0);
   final defaultColor = Colors.grey;
-  var _activeColor = Colors.blue;
+  final _activeColor = Colors.blue;
   int _currentIndex = 0;
 
   @override
@@ -26,6 +26,12 @@ class _BottomNavigatorState extends State<BottomNavigator> {
     return Scaffold(
       body: PageView(
         controller: _controller,
+        // onPageChanged: (index){
+        //   setState(() {
+        //     // 解决当PageView支持左右滑动切换时，底部导航item不随滑动更新问题
+        //     _currentIndex = index;
+        //   });
+        // },
         // 禁止PageView左右滑动
         physics: const NeverScrollableScrollPhysics(),
         children: const [
