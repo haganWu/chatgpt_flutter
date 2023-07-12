@@ -1,8 +1,10 @@
-import 'package:chatgpt_flutter/pages/home_page.dart';
+import 'package:chatgpt_flutter/pages/bottom_navigator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hi_cache/flutter_hi_cache.dart';
 import 'package:login_sdk/dao/login_dao.dart';
 import 'package:login_sdk/login_sdk.dart';
 import 'package:login_sdk/pages/login_page.dart';
+import 'package:openai_flutter/http/ai_config.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
             if (LoginDao.getBoardingPass() == null) {
               return const LoginPage();
             } else {
-              return const HomePage();
+              return const BottomNavigator();
             }
           } else {
             return const Scaffold(
@@ -38,6 +40,8 @@ class MyApp extends StatelessWidget {
   }
 
   Future<void> doInit() async {
-    await LoginConfig.instance().init(homePage: const HomePage());
+    await LoginConfig.instance().init(homePage: const BottomNavigator());
+    await HiCache.preInit();
+    AiConfigBuilder.init(apiKey: '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', proxy: '10.1.37.84:56288');
   }
 }
