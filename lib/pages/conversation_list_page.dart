@@ -16,7 +16,7 @@ class ConversationListPage extends StatefulWidget {
   State<ConversationListPage> createState() => _ConversationListPageState();
 }
 
-class _ConversationListPageState extends State<ConversationListPage> {
+class _ConversationListPageState extends State<ConversationListPage> with  AutomaticKeepAliveClientMixin{
   List<ConversationModel> conversationList = [];
   late ConversationListDao conversationListDao;
 
@@ -61,6 +61,7 @@ class _ConversationListPageState extends State<ConversationListPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       // appBar: AppBar(
       //   title: const Text('ChatGPT'),
@@ -167,4 +168,8 @@ class _ConversationListPageState extends State<ConversationListPage> {
     conversationListDao.saveConversation(pendingModel!);
     // TODO 更新数据
   }
+
+  // 防止页面切回来时请求刷新数据
+  @override
+  bool get wantKeepAlive => true;
 }
