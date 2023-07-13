@@ -94,21 +94,26 @@ class _ConversationListPageState extends State<ConversationListPage> with Automa
   void _jumpToConversation(ConversationModel model) {
     AiLogger.log(message: 'model:${model.title}', tag: '_jumpToConversation');
     pendingModel = model;
-    NavigatorUtil.push(context, ConversationPage(conversationModel: model,conversationUpdate: (model) => _doUpdate(model.cid),)).then((value) {
+    NavigatorUtil.push(
+        context,
+        ConversationPage(
+          conversationModel: model,
+          conversationUpdate: (model) => _doUpdate(model.cid),
+        )).then((value) {
       Future.delayed(const Duration(milliseconds: 500), () => _doUpdate(model.cid));
     });
   }
 
   _doUpdate(int cid) async {
-    if(pendingModel == null || pendingModel?.title == null){
+    if (pendingModel == null || pendingModel?.title == null) {
       return;
     }
     var messageDao = MessageDao(storage: conversationListDao.storage, cid: cid);
     var count = await messageDao.getMessageCount();
-    if(pendingModel!.stickTime > 0){
+    if (pendingModel!.stickTime > 0) {
       //TODO 置顶列表
     } else {
-      if(!conversationList.contains(pendingModel)){
+      if (!conversationList.contains(pendingModel)) {
         conversationList.add(pendingModel!);
       }
     }
@@ -124,12 +129,13 @@ class _ConversationListPageState extends State<ConversationListPage> with Automa
   bool get wantKeepAlive => true;
 
   _onDelete(ConversationModel model) {
-    // TODO 更新数据
-    AiLogger.log(message: '_onDelete -> title:${model.title}',tag: 'ConversationListPage');
+    conversationListDao.deleteConversation(model);
+    conversationList.remove((model));
+    setState(() {});
   }
 
   _onStick({required bool isStick, required ConversationModel model}) {
     // TODO 更新数据
-    AiLogger.log(message: '_onStick -> title:${model.title}',tag: 'ConversationListPage');
+    AiLogger.log(message: '_onStick -> title:${model.title}', tag: 'ConversationListPage');
   }
 }

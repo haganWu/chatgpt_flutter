@@ -7,6 +7,7 @@ import 'package:chatgpt_flutter/db/hi_db_manager.dart';
 import 'package:chatgpt_flutter/db/message_dao.dart';
 import 'package:chatgpt_flutter/models/conversation_model.dart';
 import 'package:chatgpt_flutter/util/hi_dialog.dart';
+import 'package:chatgpt_flutter/util/widget_utils.dart';
 import 'package:chatgpt_flutter/widget/message_input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:login_sdk/dao/login_dao.dart';
@@ -48,14 +49,6 @@ class _ConversationPageState extends State<ConversationPage> {
               debugPrint('onBubbleTap - ${messageModel.content}');
             },
             onBubbleLongPress: _onBubbleLongPress,
-          ));
-
-  get _appBar =>
-      PreferredSize(
-          preferredSize: const Size.fromHeight(36),
-          child: AppBar(
-            centerTitle: true,
-            title: Text(_title, style: const TextStyle(fontSize: 12)),
           ));
 
   String get _title => _sendBtnEnable ? '与ChatGPT会话' : '对方正在输入...';
@@ -113,7 +106,7 @@ class _ConversationPageState extends State<ConversationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar,
+      appBar: WidgetUtils.getCustomAppBar(_title),
       body: Column(
         children: [
           _chatList,

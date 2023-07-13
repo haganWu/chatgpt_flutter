@@ -42,6 +42,6 @@ class MyApp extends StatelessWidget {
   Future<void> doInit() async {
     await LoginConfig.instance().init(homePage: const BottomNavigator());
     await HiCache.preInit();
-    AiConfigBuilder.init(apiKey: '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', proxy: '10.1.37.84:56288');
+    AiConfigBuilder.init(apiKey: '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', proxy: '10.1.37.84:56288');
   }
 }
