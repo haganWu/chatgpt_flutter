@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:chat_message/core/chat_controller.dart';
 import 'package:chat_message/models/message_model.dart';
 import 'package:chat_message/widget/chat_list_widget.dart';
@@ -9,19 +8,29 @@ import 'package:chatgpt_flutter/db/message_dao.dart';
 import 'package:chatgpt_flutter/models/conversation_model.dart';
 import 'package:chatgpt_flutter/widget/message_input_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:login_sdk/dao/login_dao.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import '../util/constants.dart';
 
+typedef OnConversationUpdate = void Function(ConversationModel model);
+
 class ConversationPage extends StatefulWidget {
   final ConversationModel conversationModel;
+  final OnConversationUpdate? conversationUpdate;
 
-  const ConversationPage({Key? key, required this.conversationModel}) : super(key: key);
+  const ConversationPage({Key? key, required this.conversationModel, this.conversationUpdate}) : super(key: key);
 
   @override
   State<ConversationPage> createState() => _ConversationPageState();
 }
 
 class _ConversationPageState extends State<ConversationPage> {
+  //若为新建的对话框，则_pendingUpdate为tue
+  bool get _pendingUpdate => widget.conversationModel.title == null;
+
+  // 是否有通知聊天列表页面更新会话
+  bool _hadUpdate = false;
+  late Map<String, dynamic> userInfo;
   String _inputMessage = '';
   bool _sendBtnEnable = true;
   late MessageDao messageDao;
@@ -63,6 +72,7 @@ class _ConversationPageState extends State<ConversationPage> {
   }
 
   void _doInit() async {
+    userInfo = LoginDao.getUserInfo()!;
     chatController = ChatController(
       initialMessageList: [],
       scrollController: _scrollController,
@@ -76,8 +86,7 @@ class _ConversationPageState extends State<ConversationPage> {
       }
     });
     var dbManager = await HiDBManager.instance(dbName: HiDBManager.getAccountHash());
-    // TODO fix cid
-    messageDao = MessageDao(storage: dbManager, cid: 123);
+    messageDao = MessageDao(storage: dbManager, cid: widget.conversationModel.cid);
     // 加载历史对话信息
     var list = await _loadData();
     chatController.loadMoreData(list);
@@ -87,10 +96,12 @@ class _ConversationPageState extends State<ConversationPage> {
   void _addMessage(MessageModel model) {
     chatController.addMessage(model);
     messageDao.saveMessage(model);
+    _notifyConversationListUpdate();
   }
 
   @override
   void dispose() {
+    _updateConversation();
     super.dispose();
     // chatController.dispose();
   }
@@ -111,6 +122,7 @@ class _ConversationPageState extends State<ConversationPage> {
 
   // 不适用_inputMessage 是因为在结果回来之前_inputMessage可能会边
   void _onSend(final String inputMessage) async {
+    widget.conversationModel.hadChanged = true;
     _addMessage(_genMessageModel(ownerType: OwnerType.sender, message: inputMessage));
     setState(() {
       _sendBtnEnable = false;
@@ -130,11 +142,29 @@ class _ConversationPageState extends State<ConversationPage> {
     });
   }
 
+  ///通知聊天列表更新当前会话
+  _notifyConversationListUpdate() {
+    if (!_hadUpdate && _pendingUpdate && widget.conversationUpdate != null) {
+      _hadUpdate = true;
+      _updateConversation();
+      widget.conversationUpdate!(widget.conversationModel);
+    }
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    // 页面关闭后不再处理消息更新
+    if(!mounted) {
+      return;
+    }
+    super.setState(fn);
+  }
+
   MessageModel _genMessageModel({required OwnerType ownerType, required String message}) {
     String avatar, ownerName;
     if (ownerType == OwnerType.sender) {
-      avatar = Constants.senderIcon;
-      ownerName = Constants.senderName;
+      avatar = userInfo['avatar'];
+      ownerName = userInfo['userName'];
     } else {
       avatar = Constants.chatGPTIcon;
       ownerName = Constants.chatGPTName;
@@ -166,5 +196,16 @@ class _ConversationPageState extends State<ConversationPage> {
       }
     }
     return list;
+  }
+
+  void _updateConversation() {
+    if(chatController.initialMessageList.isNotEmpty) {
+      var model = chatController.initialMessageList.first;
+      widget.conversationModel.lastMessage = model.content;
+      // TODO  fix now
+      widget.conversationModel.updateAt = model.createdAt;
+      widget.conversationModel.title ??= chatController.initialMessageList.last.content;
+
+    }
   }
 }
