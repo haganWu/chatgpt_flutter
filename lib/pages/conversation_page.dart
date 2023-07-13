@@ -6,6 +6,7 @@ import 'package:chatgpt_flutter/dao/completion_dao.dart';
 import 'package:chatgpt_flutter/db/hi_db_manager.dart';
 import 'package:chatgpt_flutter/db/message_dao.dart';
 import 'package:chatgpt_flutter/models/conversation_model.dart';
+import 'package:chatgpt_flutter/util/hi_dialog.dart';
 import 'package:chatgpt_flutter/widget/message_input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:login_sdk/dao/login_dao.dart';
@@ -39,20 +40,23 @@ class _ConversationPageState extends State<ConversationPage> {
   final ScrollController _scrollController = ScrollController();
   int pageIndex = 1;
 
-  get _chatList => Expanded(
+  get _chatList =>
+      Expanded(
           child: ChatListWidget(
-        chatController: chatController,
-        onBubbleTap: (MessageModel messageModel, BuildContext ancestor) {
-          debugPrint('onBubbleLongPress - ${messageModel.content}');
-        },
-      ));
+            chatController: chatController,
+            onBubbleTap: (MessageModel messageModel, BuildContext ancestor) {
+              debugPrint('onBubbleTap - ${messageModel.content}');
+            },
+            onBubbleLongPress: _onBubbleLongPress,
+          ));
 
-  get _appBar => PreferredSize(
-      preferredSize: const Size.fromHeight(36),
-      child: AppBar(
-        centerTitle: true,
-        title: Text(_title, style: const TextStyle(fontSize: 12)),
-      ));
+  get _appBar =>
+      PreferredSize(
+          preferredSize: const Size.fromHeight(36),
+          child: AppBar(
+            centerTitle: true,
+            title: Text(_title, style: const TextStyle(fontSize: 12)),
+          ));
 
   String get _title => _sendBtnEnable ? '与ChatGPT会话' : '对方正在输入...';
 
@@ -154,7 +158,7 @@ class _ConversationPageState extends State<ConversationPage> {
   @override
   void setState(VoidCallback fn) {
     // 页面关闭后不再处理消息更新
-    if(!mounted) {
+    if (!mounted) {
       return;
     }
     super.setState(fn);
@@ -173,7 +177,9 @@ class _ConversationPageState extends State<ConversationPage> {
     return MessageModel(
       ownerType: ownerType,
       content: message,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
+      createdAt: DateTime
+          .now()
+          .millisecondsSinceEpoch,
       avatar: avatar,
       ownerName: ownerName,
     );
@@ -199,13 +205,54 @@ class _ConversationPageState extends State<ConversationPage> {
   }
 
   void _updateConversation() {
-    if(chatController.initialMessageList.isNotEmpty) {
+    if (chatController.initialMessageList.isNotEmpty) {
       var model = chatController.initialMessageList.first;
       widget.conversationModel.lastMessage = model.content;
-      // TODO  fix now
       widget.conversationModel.updateAt = model.createdAt;
       widget.conversationModel.title ??= chatController.initialMessageList.last.content;
-
     }
+  }
+
+  void _onBubbleLongPress(MessageModel message, BuildContext ancestor) {
+    bool left = message.ownerType == OwnerType.receiver ? true : false;
+    double offsetX = left ? -120 : 30;
+    HiDialog.showPopMenu(
+      ancestor,
+      offsetX: offsetX,
+      items: [
+        PopupMenuItem(
+          onTap: _addFavorite(message),
+          child: const Text('设为精彩'),
+        ),
+        PopupMenuItem(
+          onTap: _copyMessage(message),
+          child: const Text('复制'),
+        ),
+        PopupMenuItem(
+          onTap: _deleteMessage(message),
+          child: const Text('删除'),
+        ),
+        PopupMenuItem(
+          onTap: _shareMessage(message),
+          child: const Text('转发'),
+        ),
+      ],
+    );
+  }
+
+  _addFavorite(MessageModel message) {
+    // TODO 收藏
+  }
+
+  _copyMessage(MessageModel message) {
+    // TODO 复制
+  }
+
+  _deleteMessage(MessageModel message) {
+    // TODO 删除
+  }
+
+  _shareMessage(MessageModel message) {
+    // TODO 转发
   }
 }

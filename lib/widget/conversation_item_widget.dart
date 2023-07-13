@@ -1,5 +1,6 @@
 import 'package:chat_message/util/date_format_utils.dart';
 import 'package:chatgpt_flutter/models/conversation_model.dart';
+import 'package:chatgpt_flutter/util/hi_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:login_sdk/util/padding_extension.dart';
 
@@ -55,14 +56,14 @@ class ConversationItemWidget extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      model.title??"",
+                      model.title ?? "",
                       style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black87),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   2.paddingWidth,
-                  Text(DateFormatUtils.format(model.updateAt??0, dayOnly: false), style: const TextStyle(fontSize: 12, color: Colors.grey))
+                  Text(DateFormatUtils.format(model.updateAt ?? 0, dayOnly: false), style: const TextStyle(fontSize: 12, color: Colors.grey))
                 ],
               ),
               2.paddingHeight,
@@ -100,6 +101,29 @@ class ConversationItemWidget extends StatelessWidget {
   }
 
   _showPopMenu(BuildContext context) {
-    // TODO
+    var isStick = model.stickTime > 0 ? true : false;
+    var showStick = isStick ? '取消置顶' : '置顶';
+    HiDialog.showPopMenu(
+      context,
+      offsetX: -50,
+      items: [
+        PopupMenuItem(
+          child: Text(showStick),
+          onTap: () {
+            if (onStick != null) {
+              onStick!(model: model, isStick: !isStick);
+            }
+          },
+        ),
+        PopupMenuItem(
+          child: const Text('删除'),
+          onTap: () {
+            if (onDelete != null) {
+              onDelete!(model);
+            }
+          },
+        ),
+      ],
+    );
   }
 }

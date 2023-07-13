@@ -125,9 +125,11 @@ class _ConversationListPageState extends State<ConversationListPage> with Automa
 
   _onDelete(ConversationModel model) {
     // TODO 更新数据
+    AiLogger.log(message: '_onDelete -> title:${model.title}',tag: 'ConversationListPage');
   }
 
   _onStick({required bool isStick, required ConversationModel model}) {
     // TODO 更新数据
+    AiLogger.log(message: '_onStick -> title:${model.title}',tag: 'ConversationListPage');
   }
 }
