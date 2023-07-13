@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'package:chatgpt_flutter/db/hi_db_manager.dart';
 import 'package:chatgpt_flutter/db/message_dao.dart';
 import 'package:chatgpt_flutter/db/table_name.dart';
@@ -16,16 +17,16 @@ abstract class IConversationList {
   /// 分页查询
   Future<List<ConversationModel>> getConversationList({int pageIndex = 1, int pageSize = 10});
 
-  // /// 置顶和取消置顶
-  // Future<int> updateStickTime(ConversationModel model, {bool isStick = false});
-  //
-  // /// 查询置顶的会话
-  // Future<List<ConversationModel>> getStickConversationList();
-  //
-  // /// 更新会话
-  // void update(ConversationModel model);
-  //
-  // Future<ConversationModel> getConversationByCid(int cid);
+  /// 置顶和取消置顶
+  Future<int> updateStickTime(ConversationModel model, {bool isStick = false});
+
+  /// 查询置顶的会话
+  Future<List<ConversationModel>> getStickConversationList();
+//
+// /// 更新会话
+// void update(ConversationModel model);
+//
+// Future<ConversationModel> getConversationByCid(int cid);
 }
 
 class ConversationListDao implements IConversationList, ITable {
@@ -73,30 +74,32 @@ class ConversationListDao implements IConversationList, ITable {
     return resultModel.id;
   }
 
-  // @override
-  // Future<List<ConversationModel>> getStickConversationList() async {
-  //   var results = await storage.db.rawQuery('select * from $tableName cast(stickTime as integer) >0 order by updateAt desc');
-  //   var list = results.map((item) => ConversationModel.fromJson(item)).toList();
-  //   return list;
-  // }
-  //
-  // @override
-  // Future<int> updateStickTime(ConversationModel model, {bool isStick = false}) {
-  //   if (isStick) {
-  //     model.stickTime = DateFormatUtils.getZhCurrentTimeMilliseconds();
-  //   }
-  //   return storage.db.update(tableName, model.toJson(), where: 'id=?', whereArgs: [model.id]);
-  // }
-  //
-  // @override
-  // void update(ConversationModel model) {
-  //   storage.db.update(tableName, model.toJson(), where: 'cid=?', whereArgs: [model.cid]);
-  // }
-  //
-  // @override
-  // Future<ConversationModel> getConversationByCid(int cid) async {
-  //   var results = await storage.db.query(tableName, where: 'cid = ?', whereArgs: [cid]);
-  //   var list = results.map((item) => ConversationModel.fromJson(item)).toList();
-  //   return list.first;
-  // }
+  @override
+  Future<int> updateStickTime(ConversationModel model, {bool isStick = false}) {
+    if (isStick) {
+      model.stickTime = DateTime.now().millisecondsSinceEpoch;
+    } else {
+      model.stickTime = 0;
+    }
+    return storage.db.update(tableName, model.toJson(),conflictAlgorithm: ConflictAlgorithm.ignore);
+  }
+
+  @override
+  Future<List<ConversationModel>> getStickConversationList() async {
+    var results = await storage.db.rawQuery('select * from $tableName where cast(stickTime as integer) >0 order by stickTime desc;');
+    var list = results.map((item) => ConversationModel.fromJson(item)).toList();
+    return list;
+  }
+
+// @override
+// void update(ConversationModel model) {
+//   storage.db.update(tableName, model.toJson(), where: 'cid=?', whereArgs: [model.cid]);
+// }
+//
+// @override
+// Future<ConversationModel> getConversationByCid(int cid) async {
+//   var results = await storage.db.query(tableName, where: 'cid = ?', whereArgs: [cid]);
+//   var list = results.map((item) => ConversationModel.fromJson(item)).toList();
+//   return list.first;
+// }
 }

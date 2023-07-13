@@ -20,23 +20,20 @@ class ConversationListPage extends StatefulWidget {
 
 class _ConversationListPageState extends State<ConversationListPage> with AutomaticKeepAliveClientMixin {
   List<ConversationModel> conversationList = [];
+  List<ConversationModel> stickConversationList = [];
   late ConversationListDao conversationListDao;
 
   // 跳转到对话详情待更新的model
   ConversationModel? pendingModel;
   int pageIndex = 1;
 
+  get _dataCount => conversationList.length + stickConversationList.length;
+
   get _listView => ListView.builder(
       // 解决ListView数据量较少时无法滑动问题
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: conversationList.length,
-      itemBuilder: (BuildContext context, int index) => ConversationItemWidget(
-            model: conversationList[index],
-            showDivider: index < conversationList.length - 1,
-            onPress: _jumpToConversation,
-            onDelete: _onDelete,
-            onStick: _onStick,
-          ));
+      itemCount: _dataCount,
+      itemBuilder: (BuildContext context, int index) => _conversationWidget(index));
 
   @override
   void initState() {
@@ -47,7 +44,16 @@ class _ConversationListPageState extends State<ConversationListPage> with Automa
   void _doInit() async {
     var storage = await HiDBManager.instance(dbName: HiDBManager.getAccountHash());
     conversationListDao = ConversationListDao(storage: storage);
+    _loadStickData();
     _loadData();
+  }
+
+  Future<List<ConversationModel>> _loadStickData() async {
+    var list = await conversationListDao.getStickConversationList();
+    setState(() {
+      stickConversationList = list;
+    });
+    return list;
   }
 
   Future<List<ConversationModel>> _loadData({bool loadMore = false}) async {
@@ -111,10 +117,13 @@ class _ConversationListPageState extends State<ConversationListPage> with Automa
     var messageDao = MessageDao(storage: conversationListDao.storage, cid: cid);
     var count = await messageDao.getMessageCount();
     if (pendingModel!.stickTime > 0) {
-      //TODO 置顶列表
+      // 置顶列表
+      if (!stickConversationList.contains(pendingModel)) {
+        stickConversationList.insert(0, pendingModel!);
+      }
     } else {
       if (!conversationList.contains(pendingModel)) {
-        conversationList.add(pendingModel!);
+        conversationList.insert(0, pendingModel!);
       }
     }
     // 刷新
@@ -131,11 +140,44 @@ class _ConversationListPageState extends State<ConversationListPage> with Automa
   _onDelete(ConversationModel model) {
     conversationListDao.deleteConversation(model);
     conversationList.remove((model));
+    stickConversationList.remove(model);
     setState(() {});
   }
 
-  _onStick({required bool isStick, required ConversationModel model}) {
-    // TODO 更新数据
-    AiLogger.log(message: '_onStick -> title:${model.title}', tag: 'ConversationListPage');
+  _onStick({required bool isStick, required ConversationModel model}) async {
+    // 置顶
+    var result = await conversationListDao.updateStickTime(model, isStick: isStick);
+    // 操作失败
+    if (result <= 0) {
+      return;
+    }
+    if (isStick) {
+      conversationList.remove(model);
+      if (!stickConversationList.contains(model)) {
+        stickConversationList.insert(0, model);
+      }
+    } else {
+      stickConversationList.remove(model);
+      if (!conversationList.contains(model)) {
+        conversationList.insert(0, model);
+      }
+    }
+    setState(() {});
+  }
+
+  _conversationWidget(int index) {
+    ConversationModel model;
+    if (index < stickConversationList.length) {
+      model = stickConversationList[index];
+    } else {
+      model = conversationList[index - stickConversationList.length];
+    }
+    return ConversationItemWidget(
+      model: model,
+      showDivider: index < conversationList.length - 1,
+      onPress: _jumpToConversation,
+      onDelete: _onDelete,
+      onStick: _onStick,
+    );
   }
 }
