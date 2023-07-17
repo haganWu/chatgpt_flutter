@@ -6,6 +6,7 @@ import 'package:chatgpt_flutter/dao/completion_dao.dart';
 import 'package:chatgpt_flutter/db/hi_db_manager.dart';
 import 'package:chatgpt_flutter/db/message_dao.dart';
 import 'package:chatgpt_flutter/models/conversation_model.dart';
+import 'package:chatgpt_flutter/models/favorite_model.dart';
 import 'package:chatgpt_flutter/util/hi_dialog.dart';
 import 'package:chatgpt_flutter/util/widget_utils.dart';
 import 'package:chatgpt_flutter/widget/message_input_widget.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:login_sdk/dao/login_dao.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
+import '../db/favorite_dao.dart';
 import '../util/constants.dart';
 
 typedef OnConversationUpdate = void Function(ConversationModel model);
@@ -42,6 +44,7 @@ class _ConversationPageState extends State<ConversationPage> {
   late CompletionDao completionDao;
   final ScrollController _scrollController = ScrollController();
   int pageIndex = 1;
+  late FavoriteDao favoriteDao;
 
   get _chatList => Expanded(
           child: ChatListWidget(
@@ -89,6 +92,8 @@ class _ConversationPageState extends State<ConversationPage> {
     var list = await _loadData();
     chatController.loadMoreData(list);
     completionDao = CompletionDao(messages: list);
+    var storage = await HiDBManager.instance(dbName: HiDBManager.getAccountHash());
+    favoriteDao = FavoriteDao(storage: storage);
   }
 
   void _addMessage(MessageModel model) {
@@ -233,8 +238,8 @@ class _ConversationPageState extends State<ConversationPage> {
   }
 
   _addFavorite(MessageModel message) {
-    // TODO 收藏
-    AiLogger.log(message: '收藏！！',tag: 'DialogClick');
+    FavoriteModel model = FavoriteModel(ownerName: message.ownerName, createdAt: message.createdAt, content: message.content);
+    favoriteDao.addFavorite(model);
   }
 
   _copyMessage(MessageModel message) {

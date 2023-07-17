@@ -22,11 +22,6 @@ abstract class IConversationList {
 
   /// 查询置顶的会话
   Future<List<ConversationModel>> getStickConversationList();
-//
-// /// 更新会话
-// void update(ConversationModel model);
-//
-// Future<ConversationModel> getConversationByCid(int cid);
 }
 
 class ConversationListDao implements IConversationList, ITable {
@@ -81,7 +76,7 @@ class ConversationListDao implements IConversationList, ITable {
     } else {
       model.stickTime = 0;
     }
-    return storage.db.update(tableName, model.toJson(),conflictAlgorithm: ConflictAlgorithm.ignore);
+    return storage.db.update(tableName, model.toJson(), conflictAlgorithm: ConflictAlgorithm.ignore);
   }
 
   @override
@@ -90,16 +85,4 @@ class ConversationListDao implements IConversationList, ITable {
     var list = results.map((item) => ConversationModel.fromJson(item)).toList();
     return list;
   }
-
-// @override
-// void update(ConversationModel model) {
-//   storage.db.update(tableName, model.toJson(), where: 'cid=?', whereArgs: [model.cid]);
-// }
-//
-// @override
-// Future<ConversationModel> getConversationByCid(int cid) async {
-//   var results = await storage.db.query(tableName, where: 'cid = ?', whereArgs: [cid]);
-//   var list = results.map((item) => ConversationModel.fromJson(item)).toList();
-//   return list.first;
-// }
 }
