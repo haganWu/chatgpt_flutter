@@ -10,6 +10,8 @@ import 'package:chatgpt_flutter/util/hi_dialog.dart';
 import 'package:chatgpt_flutter/util/widget_utils.dart';
 import 'package:chatgpt_flutter/widget/message_input_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:login_sdk/dao/login_dao.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import '../util/constants.dart';
@@ -41,15 +43,14 @@ class _ConversationPageState extends State<ConversationPage> {
   final ScrollController _scrollController = ScrollController();
   int pageIndex = 1;
 
-  get _chatList =>
-      Expanded(
+  get _chatList => Expanded(
           child: ChatListWidget(
-            chatController: chatController,
-            onBubbleTap: (MessageModel messageModel, BuildContext ancestor) {
-              debugPrint('onBubbleTap - ${messageModel.content}');
-            },
-            onBubbleLongPress: _onBubbleLongPress,
-          ));
+        chatController: chatController,
+        onBubbleTap: (MessageModel messageModel, BuildContext ancestor) {
+          debugPrint('onBubbleTap - ${messageModel.content}');
+        },
+        onBubbleLongPress: _onBubbleLongPress,
+      ));
 
   String get _title => _sendBtnEnable ? '与ChatGPT会话' : '对方正在输入...';
 
@@ -170,9 +171,7 @@ class _ConversationPageState extends State<ConversationPage> {
     return MessageModel(
       ownerType: ownerType,
       content: message,
-      createdAt: DateTime
-          .now()
-          .millisecondsSinceEpoch,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
       avatar: avatar,
       ownerName: ownerName,
     );
@@ -214,19 +213,19 @@ class _ConversationPageState extends State<ConversationPage> {
       offsetX: offsetX,
       items: [
         PopupMenuItem(
-          onTap: _addFavorite(message),
+          onTap: () => _addFavorite(message),
           child: const Text('设为精彩'),
         ),
         PopupMenuItem(
-          onTap: _copyMessage(message),
+          onTap: () => _copyMessage(message),
           child: const Text('复制'),
         ),
         PopupMenuItem(
-          onTap: _deleteMessage(message),
+          onTap: () => _deleteMessage(message),
           child: const Text('删除'),
         ),
         PopupMenuItem(
-          onTap: _shareMessage(message),
+          onTap: () => _shareMessage(message),
           child: const Text('转发'),
         ),
       ],
@@ -235,17 +234,26 @@ class _ConversationPageState extends State<ConversationPage> {
 
   _addFavorite(MessageModel message) {
     // TODO 收藏
+    AiLogger.log(message: '收藏！！',tag: 'DialogClick');
   }
 
   _copyMessage(MessageModel message) {
-    // TODO 复制
+    Clipboard.setData(ClipboardData(text: message.content));  // TODO 收藏
+    AiLogger.log(message: '复制！！',tag: 'DialogClick');
+    Fluttertoast.showToast(
+      msg: '文本已复制到系统剪切板',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
   }
 
   _deleteMessage(MessageModel message) {
     // TODO 删除
+    AiLogger.log(message: '删除！！',tag: 'DialogClick');
   }
 
   _shareMessage(MessageModel message) {
     // TODO 转发
+    AiLogger.log(message: '转发！！',tag: 'DialogClick');
   }
 }
