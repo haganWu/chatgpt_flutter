@@ -255,6 +255,10 @@ class _ConversationPageState extends State<ConversationPage> {
   _deleteMessage(MessageModel message) {
     // TODO 删除
     AiLogger.log(message: '删除！！',tag: 'DialogClick');
+    chatController.deleteMessage(message);
+    messageDao.deleteMessage(message.id!);
+    _notifyConversationListUpdate();
+
   }
 
   _shareMessage(MessageModel message) {

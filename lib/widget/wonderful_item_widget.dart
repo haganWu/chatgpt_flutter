@@ -16,8 +16,8 @@ class WonderfulItemWidget extends StatelessWidget {
   const WonderfulItemWidget({super.key, required this.model, required this.onPress, required this.onDelete});
 
   get _item => Container(
-        margin: const EdgeInsets.only(left: 10, top: 2, right: 10, bottom: 4),
-        padding: const EdgeInsets.only(left: 10, top: 4, right: 10, bottom: 4),
+        margin: const EdgeInsets.only(left: 10, top: 4, right: 10, bottom: 4),
+        padding: const EdgeInsets.only(left: 10, top: 6, right: 10, bottom: 6),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(6),
@@ -39,7 +39,7 @@ class WonderfulItemWidget extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w600),
             ),
-            10.paddingHeight,
+            12.paddingHeight,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -61,9 +61,7 @@ class WonderfulItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (onPress != null) {
-          onPress!(model);
-        }
+        onPress(model);
       },
       onLongPress: () => _showPopMenu(context),
       child: _item,
@@ -80,9 +78,7 @@ class WonderfulItemWidget extends StatelessWidget {
         PopupMenuItem(
           child: const Text('删除'),
           onTap: () {
-            if (onDelete != null) {
-              onDelete!(model);
-            }
+            onDelete(model);
           },
         ),
       ],
