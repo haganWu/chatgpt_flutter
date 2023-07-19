@@ -12,7 +12,6 @@ import 'package:chatgpt_flutter/util/widget_utils.dart';
 import 'package:chatgpt_flutter/widget/message_input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:login_sdk/dao/login_dao.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import '../db/favorite_dao.dart';
@@ -88,12 +87,11 @@ class _ConversationPageState extends State<ConversationPage> {
     });
     var dbManager = await HiDBManager.instance(dbName: HiDBManager.getAccountHash());
     messageDao = MessageDao(storage: dbManager, cid: widget.conversationModel.cid);
+    favoriteDao = FavoriteDao(storage: dbManager);
     // 加载历史对话信息
     var list = await _loadData();
     chatController.loadMoreData(list);
     completionDao = CompletionDao(messages: list);
-    var storage = await HiDBManager.instance(dbName: HiDBManager.getAccountHash());
-    favoriteDao = FavoriteDao(storage: storage);
   }
 
   void _addMessage(MessageModel model) {
@@ -237,33 +235,28 @@ class _ConversationPageState extends State<ConversationPage> {
     );
   }
 
-  _addFavorite(MessageModel message) {
+  _addFavorite(MessageModel message) async {
     FavoriteModel model = FavoriteModel(ownerName: message.ownerName, createdAt: message.createdAt, content: message.content);
-    favoriteDao.addFavorite(model);
-    Fluttertoast.showToast(msg: '收藏成功',toastLength: Toast.LENGTH_SHORT,gravity: ToastGravity.BOTTOM);
+    var result = await favoriteDao.addFavorite(model);
+    if (!mounted) return;
+    HiDialog.showSnackBar(context, (result != null && result > 0) ? '收藏成功' : '收藏失败');
   }
 
-  _copyMessage(MessageModel message) {
-    Clipboard.setData(ClipboardData(text: message.content));
-    AiLogger.log(message: '复制！！',tag: 'DialogClick');
-    Fluttertoast.showToast(
-      msg: '文本已复制到系统剪切板',
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-    );
+  _copyMessage(MessageModel message) async {
+    await Clipboard.setData(ClipboardData(text: message.content));
+    if (!mounted) return;
+    HiDialog.showSnackBar(context, '文本已复制到系统剪切板');
   }
 
   _deleteMessage(MessageModel message) {
-    // TODO 删除
-    AiLogger.log(message: '删除！！',tag: 'DialogClick');
+    AiLogger.log(message: '删除！！', tag: 'DialogClick');
     chatController.deleteMessage(message);
     messageDao.deleteMessage(message.id!);
     _notifyConversationListUpdate();
-
   }
 
   _shareMessage(MessageModel message) {
     // TODO 转发
-    AiLogger.log(message: '转发！！',tag: 'DialogClick');
+    AiLogger.log(message: '转发！！', tag: 'DialogClick');
   }
 }
