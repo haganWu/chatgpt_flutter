@@ -240,6 +240,7 @@ class _ConversationPageState extends State<ConversationPage> {
   _addFavorite(MessageModel message) {
     FavoriteModel model = FavoriteModel(ownerName: message.ownerName, createdAt: message.createdAt, content: message.content);
     favoriteDao.addFavorite(model);
+    Fluttertoast.showToast(msg: '收藏成功',toastLength: Toast.LENGTH_SHORT,gravity: ToastGravity.BOTTOM);
   }
 
   _copyMessage(MessageModel message) {

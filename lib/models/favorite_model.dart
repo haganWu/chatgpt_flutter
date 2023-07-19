@@ -2,16 +2,16 @@ class FavoriteModel {
   int? id;
   String? ownerName;
   int? createdAt;
-  String? content;
+  String content;
 
-  FavoriteModel({this.id, this.ownerName, this.createdAt, this.content});
+  FavoriteModel({this.id, this.ownerName, this.createdAt, required this.content});
 
-  FavoriteModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    ownerName = json['ownerName'];
-    createdAt = json['createdAt'];
-    content = json['content'];
-  }
+  factory FavoriteModel.fromJson(Map<String, dynamic> json) => FavoriteModel(
+        id: json['id'],
+        ownerName: json['ownerName'],
+        createdAt: json['createdAt'],
+        content: json['content'],
+      );
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
