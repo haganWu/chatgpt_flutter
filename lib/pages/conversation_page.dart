@@ -188,7 +188,7 @@ class _ConversationPageState extends State<ConversationPage> {
     } else {
       pageIndex = 1;
     }
-    var list = await messageDao.getMessages(pageIndex: pageIndex, pageSize: 4);
+    var list = await messageDao.getMessages(pageIndex: pageIndex, pageSize: 10);
     AiLogger.log(message: 'count: ${list.length}', tag: 'ConversationPage');
     AiLogger.log(message: '_loadAll: ${jsonEncode(list)}', tag: 'ConversationPage');
     if (loadMore) {
@@ -243,7 +243,7 @@ class _ConversationPageState extends State<ConversationPage> {
   }
 
   _copyMessage(MessageModel message) {
-    Clipboard.setData(ClipboardData(text: message.content));  // TODO 收藏
+    Clipboard.setData(ClipboardData(text: message.content));
     AiLogger.log(message: '复制！！',tag: 'DialogClick');
     Fluttertoast.showToast(
       msg: '文本已复制到系统剪切板',
