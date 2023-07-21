@@ -41,6 +41,15 @@ class _ConversationListPageState extends State<ConversationListPage> with Automa
     _doInit();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    // fix 热重载build方法被执行两次，_doInit执行setState时页面已经销毁问题
+    if(!mounted){
+      return;
+    }
+    super.setState(fn);
+  }
+
   void _doInit() async {
     var storage = await HiDBManager.instance(dbName: HiDBManager.getAccountHash());
     conversationListDao = ConversationListDao(storage: storage);
