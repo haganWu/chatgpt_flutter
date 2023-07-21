@@ -87,10 +87,19 @@ class _WonderfulPageState extends State<WonderfulPage> /*with AutomaticKeepAlive
     NavigatorUtil.push(context, WonderfulDetailPage(model: model));
   }
 
-  _onDelete(FavoriteModel model) {
-    favoriteDao.removeFavorite(model);
-    favoriteList.remove(model);
-    setState(() {});
+  _onDelete(FavoriteModel model) async {
+    var result = await favoriteDao.removeFavorite(model);
+    var showText = "";
+    if (result != null && result > 0) {
+      setState(() {
+        favoriteList.remove(model);
+      });
+      showText = "删除成功";
+    } else {
+      showText = "删除失败";
+    }
+    if (!mounted) return;
+    HiDialog.showSnackBar(context, showText);
   }
 
   _onCopy(FavoriteModel model) async {

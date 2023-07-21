@@ -249,11 +249,16 @@ class _ConversationPageState extends State<ConversationPage> {
     HiUtils.copyMessage(context, '文本已复制到系统剪切板');
   }
 
-  _deleteMessage(MessageModel message) {
-    AiLogger.log(message: '删除！！', tag: 'DialogClick');
-    chatController.deleteMessage(message);
-    messageDao.deleteMessage(message.id!);
-    _notifyConversationListUpdate();
+  _deleteMessage(MessageModel message) async {
+    try {
+      var result = await messageDao.deleteMessage(message.id!);
+      if (result > 0) {
+        chatController.deleteMessage(message);
+        _notifyConversationListUpdate();
+      }
+    } catch (e) {
+      AiLogger.log(message: e.toString(), tag: "Exception");
+    }
   }
 
   _shareMessage(MessageModel message) {
