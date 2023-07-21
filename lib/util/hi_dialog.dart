@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class HiDialog {
+  /// 私有构造
+  HiDialog._();
   /// 弹窗
   static Future<T?> showPopMenu<T>(BuildContext context, {required List<PopupMenuEntry<T>> items, double offsetX = 0, offsetY = 0}) {
     var x = MediaQuery.of(context).size.width / 2 + offsetX;

@@ -5,8 +5,11 @@ import 'package:chatgpt_flutter/models/favorite_model.dart';
 import 'package:chatgpt_flutter/pages/wonderful_detail_page.dart';
 import 'package:chatgpt_flutter/util/widget_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:login_sdk/util/navigator_util.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
+import '../util/hi_dialog.dart';
+import '../util/hi_utils.dart';
 import '../widget/wonderful_item_widget.dart';
 
 class WonderfulPage extends StatefulWidget {
@@ -73,6 +76,9 @@ class _WonderfulPageState extends State<WonderfulPage> /*with AutomaticKeepAlive
       model: favoriteList[index],
       onPress: _jumpToWonderfulDetailPage,
       onDelete: _onDelete,
+      onCopy: _onCopy,
+      onShare: _onShare,
+      onMore: _onMore,
     );
   }
 
@@ -85,5 +91,19 @@ class _WonderfulPageState extends State<WonderfulPage> /*with AutomaticKeepAlive
     favoriteDao.removeFavorite(model);
     favoriteList.remove(model);
     setState(() {});
+  }
+
+  _onCopy(FavoriteModel model) async {
+    await Clipboard.setData(ClipboardData(text: model.content));
+    if (!mounted) return;
+    HiUtils.copyMessage(context, '文本已复制到系统剪切板');
+  }
+
+  _onShare(FavoriteModel model) {
+    HiDialog.showSnackBar(context, '转发 - ${model.content.length < 20 ? model.content : model.content.substring(0, 20)}');
+  }
+
+  _onMore(FavoriteModel model) {
+    HiDialog.showSnackBar(context, '更多 - ${model.content.length < 20 ? model.content : model.content.substring(0, 20)}');
   }
 }

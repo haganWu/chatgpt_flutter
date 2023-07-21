@@ -2,8 +2,8 @@ import 'package:chatgpt_flutter/models/favorite_model.dart';
 import 'package:chatgpt_flutter/util/widget_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
+import '../util/hi_utils.dart';
 
 class WonderfulDetailPage extends StatelessWidget {
   final FavoriteModel model;
@@ -26,28 +26,23 @@ class WonderfulDetailPage extends StatelessWidget {
               yPos = details.globalPosition.dy;
             },
             onLongPress: () => _showCopyPopup(context, xPos, yPos),
-            child: Text(model.content!),
+            child: Text(model.content),
           ),
         ),
       ),
     );
   }
 
-  _showCopyPopup(BuildContext context, double xPos, double yPos) {
+  _showCopyPopup(BuildContext context, double xPos, double yPos) async {
     AiLogger.log(message: '_showCopyPopup', tag: 'WonderfulDetailPage');
     // 弹框展示位置
     final RelativeRect position = RelativeRect.fromLTRB(xPos, yPos, xPos, 0);
     showMenu(context: context, position: position, items: [
       PopupMenuItem(
         child: const Text('复制'),
-        onTap: () {
-          Clipboard.setData(ClipboardData(text: model.content!));
-          AiLogger.log(message: '复制！！', tag: 'DialogClick');
-          Fluttertoast.showToast(
-            msg: '文本已复制到系统剪切板',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-          );
+        onTap: () async {
+          Clipboard.setData(ClipboardData(text: model.content));
+          HiUtils.copyMessage(context, '文本已复制到系统剪切板');
         },
       ),
     ]);

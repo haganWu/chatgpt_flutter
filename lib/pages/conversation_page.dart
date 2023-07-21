@@ -16,6 +16,7 @@ import 'package:login_sdk/dao/login_dao.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import '../db/favorite_dao.dart';
 import '../util/constants.dart';
+import '../util/hi_utils.dart';
 
 typedef OnConversationUpdate = void Function(ConversationModel model);
 
@@ -245,7 +246,7 @@ class _ConversationPageState extends State<ConversationPage> {
   _copyMessage(MessageModel message) async {
     await Clipboard.setData(ClipboardData(text: message.content));
     if (!mounted) return;
-    HiDialog.showSnackBar(context, '文本已复制到系统剪切板');
+    HiUtils.copyMessage(context, '文本已复制到系统剪切板');
   }
 
   _deleteMessage(MessageModel message) {
@@ -256,7 +257,7 @@ class _ConversationPageState extends State<ConversationPage> {
   }
 
   _shareMessage(MessageModel message) {
-    // TODO 转发
-    AiLogger.log(message: '转发！！', tag: 'DialogClick');
+    // TODO
+    HiDialog.showSnackBar(context, '转发 - ${message.content.length < 20 ? message.content : message.content.substring(0, 20)}');
   }
 }
