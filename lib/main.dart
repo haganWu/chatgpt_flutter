@@ -1,4 +1,5 @@
 import 'package:chatgpt_flutter/pages/bottom_navigator.dart';
+import 'package:chatgpt_flutter/util/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hi_cache/flutter_hi_cache.dart';
 import 'package:login_sdk/dao/login_dao.dart';
@@ -42,6 +43,6 @@ class MyApp extends StatelessWidget {
   Future<void> doInit() async {
     await LoginConfig.instance().init(homePage: const BottomNavigator());
     await HiCache.preInit();
-    AiConfigBuilder.init(apiKey: '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', proxy: '10.1.37.84:56288');
+    AiConfigBuilder.init(apiKey: Constants.apiKey, proxy: Constants.keyHiProxy);
   }
 }

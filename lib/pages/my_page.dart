@@ -1,3 +1,4 @@
+import 'package:chatgpt_flutter/widget/custom_theme_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:login_sdk/dao/login_dao.dart';
 import 'package:login_sdk/util/padding_extension.dart';
@@ -101,5 +102,21 @@ class _MyPageState extends State<MyPage> {
 
   onSetTheme() {
     AiLogger.log(message: "设置主题", tag: "MyPage");
+    showSetThemeDialog(context);
+  }
+
+  void showSetThemeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomThemeDialogWidget(
+          onColorClickCallback: _onThemeColorCallback,
+        );
+      },
+    );
+  }
+
+  void _onThemeColorCallback(MaterialColor color, String colorStr) {
+    AiLogger.log(message: 'colorStr: $colorStr', tag: "MyPage");
   }
 }
