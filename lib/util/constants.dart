@@ -6,7 +6,7 @@ class Constants {
   static String chatGPTIcon = 'https://o.devio.org/images/o_as/avatar/tx2.jpeg';
   static String chatGPTName = 'ChatGPT';
 
-  // 会话ICOn
+  // 会话Icon
 
   static String conversationIcon = 'https://o.devio.org/images/o_as/avatar/tx7.jpeg';
 }
