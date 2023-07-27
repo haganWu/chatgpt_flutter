@@ -20,7 +20,7 @@ class WidgetUtils {
         ));
   }
 
-  static PreferredSize getMyPageAppBar(double statusHeight, String icon, String userName, String userId, OnClickCallback clickCallback) {
+  static PreferredSize getMyPageAppBar(double statusHeight, Color color, String icon, String userName, String userId, OnClickCallback clickCallback) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(90),
       child: Container(
@@ -47,7 +47,7 @@ class WidgetUtils {
                 onTap: () {
                   clickCallback();
                 },
-                child: const Icon(Icons.logout, color: Colors.blue))
+                child: Icon(Icons.logout, color: color))
           ],
         ),
       ),

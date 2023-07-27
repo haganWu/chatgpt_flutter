@@ -2,8 +2,10 @@ import 'package:chatgpt_flutter/pages/conversation_list_page.dart';
 import 'package:chatgpt_flutter/pages/my_page.dart';
 import 'package:chatgpt_flutter/pages/study_page.dart';
 import 'package:chatgpt_flutter/pages/wonderful_page.dart';
+import 'package:chatgpt_flutter/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:login_sdk/util/navigator_util.dart';
+import 'package:provider/provider.dart';
 
 /// 首页底部导航
 class BottomNavigator extends StatefulWidget {
@@ -16,13 +18,15 @@ class BottomNavigator extends StatefulWidget {
 class _BottomNavigatorState extends State<BottomNavigator> {
   final PageController _controller = PageController(initialPage: 0);
   final defaultColor = Colors.grey;
-  final _activeColor = Colors.blue;
+  Color _activeColor = Colors.blue;
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     // 更新导航器上下文context
     NavigatorUtil.updateContext(context);
+    var themeProvider = context.watch<ThemeProvider>();
+    _activeColor = themeProvider.themeColor;
     return Scaffold(
       body: PageView(
         controller: _controller,

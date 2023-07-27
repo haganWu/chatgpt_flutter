@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/theme_provider.dart';
 
 /// 聊天输入框
 class MessageInputWidget extends StatefulWidget {
@@ -40,18 +43,22 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
     ));
   }
 
-  get _sendBtn => Container(
-        margin: const EdgeInsets.only(left: 10),
-        decoration: BoxDecoration(
-          color: widget.enable ? Colors.blue : Colors.blueGrey,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        padding: const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 6),
-        child: InkWell(
-          onTap: widget.enable ? _onSend : null,
-          child: const Text('发送', style: TextStyle(color: Colors.white, fontSize: 12)),
-        ),
-      );
+  get _sendBtn {
+    var themeProvider = context.watch<ThemeProvider>();
+    var color = themeProvider.themeColor;
+   return Container(
+      margin: const EdgeInsets.only(left: 10),
+      decoration: BoxDecoration(
+        color: widget.enable ? color : Colors.blueGrey,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      padding: const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 6),
+      child: InkWell(
+        onTap: widget.enable ? _onSend : null,
+        child: const Text('发送', style: TextStyle(color: Colors.white, fontSize: 12)),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

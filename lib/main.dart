@@ -1,4 +1,6 @@
 import 'package:chatgpt_flutter/pages/bottom_navigator.dart';
+import 'package:chatgpt_flutter/provider/hi_provider.dart';
+import 'package:chatgpt_flutter/provider/theme_provider.dart';
 import 'package:chatgpt_flutter/util/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hi_cache/flutter_hi_cache.dart';
@@ -6,6 +8,7 @@ import 'package:login_sdk/dao/login_dao.dart';
 import 'package:login_sdk/login_sdk.dart';
 import 'package:login_sdk/pages/login_page.dart';
 import 'package:openai_flutter/http/ai_config.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,29 +17,36 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  Widget get _loadingPage => const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: FutureBuilder<void>(
-        future: doInit(),
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (LoginDao.getBoardingPass() == null) {
-              return const LoginPage();
-            } else {
-              return const BottomNavigator();
-            }
-          } else {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+    return FutureBuilder<void>(
+      future: doInit(),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        Widget widget;
+        if (snapshot.connectionState == ConnectionState.done) {
+          widget = LoginDao.getBoardingPass() == null ? const LoginPage() : const BottomNavigator();
+        } else {
+          return _loadingPage;
+        }
+        return MultiProvider(
+          providers: mainProviders,
+          child: Consumer<ThemeProvider>(builder: (BuildContext context, ThemeProvider themeProvider, Widget? child) {
+            return MaterialApp(
+              home: widget,
+              theme: themeProvider.getTheme(),
+              title: 'ChatGPT',
             );
-          }
-        },
-      ),
+          }),
+        );
+      },
     );
   }
 

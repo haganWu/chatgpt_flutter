@@ -1,9 +1,10 @@
+import 'package:chatgpt_flutter/provider/theme_provider.dart';
 import 'package:chatgpt_flutter/widget/custom_theme_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:login_sdk/dao/login_dao.dart';
 import 'package:login_sdk/util/padding_extension.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
-
+import 'package:provider/provider.dart';
 import '../util/widget_utils.dart';
 
 /// 我的页面
@@ -25,9 +26,12 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
+    var themeProvider = context.watch<ThemeProvider>();
+    var color = themeProvider.themeColor;
     return Scaffold(
       appBar: WidgetUtils.getMyPageAppBar(
         (MediaQuery.of(context).padding.top),
+        color,
         userInfo?['avatar'],
         userInfo?['userName'],
         userInfo?['imoocId'],
@@ -35,9 +39,9 @@ class _MyPageState extends State<MyPage> {
       ),
       body: Column(
         children: [
-          _genItem(title: "检查更新", icon: Icons.update, onClick: onCheckUpdate),
-          _genItem(title: "设置代理", icon: Icons.wifi_tethering_error, onClick: onSetAgency),
-          _genItem(title: "设置主题", subTitle: "请选择你喜欢的主题", onClick: onSetTheme),
+          _genItem(title: "检查更新", icon: Icons.update,color:color, onClick: onCheckUpdate),
+          _genItem(title: "设置代理", icon: Icons.wifi_tethering_error,color:color, onClick: onSetAgency),
+          _genItem(title: "设置主题", subTitle: "请选择你喜欢的主题",color:color, onClick: onSetTheme),
         ],
       ),
     );
@@ -48,7 +52,7 @@ class _MyPageState extends State<MyPage> {
     LoginDao.logout();
   }
 
-  _genItem({required String title, IconData? icon, String? subTitle, Function? onClick}) {
+  _genItem({required String title, IconData? icon, String? subTitle,required Color color, Function? onClick}) {
     return InkWell(
       onTap: () {
         if (onClick != null) {
@@ -75,7 +79,7 @@ class _MyPageState extends State<MyPage> {
                         textAlign: TextAlign.start,
                       ))
                     : Container(),
-                icon != null ? Icon(icon, color: Colors.blue) : Container(),
+                icon != null ? Icon(icon, color: color) : Container(),
               ],
             ),
             10.paddingHeight
@@ -110,13 +114,14 @@ class _MyPageState extends State<MyPage> {
       context: context,
       builder: (BuildContext context) {
         return CustomThemeDialogWidget(
-          onColorClickCallback: _onThemeColorCallback,
+          onThemeChange: _onThemeChange,
         );
       },
     );
   }
 
-  void _onThemeColorCallback(MaterialColor color, String colorStr) {
+  void _onThemeChange(String colorStr) {
     AiLogger.log(message: 'colorStr: $colorStr', tag: "MyPage");
+    context.read<ThemeProvider>().setTheme(colorName:colorStr);
   }
 }
