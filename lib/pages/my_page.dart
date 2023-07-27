@@ -1,6 +1,7 @@
 import 'package:chatgpt_flutter/provider/theme_provider.dart';
 import 'package:chatgpt_flutter/widget/custom_theme_dialog_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:login_sdk/dao/login_dao.dart';
 import 'package:login_sdk/util/padding_extension.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
@@ -28,6 +29,10 @@ class _MyPageState extends State<MyPage> {
   Widget build(BuildContext context) {
     var themeProvider = context.watch<ThemeProvider>();
     var color = themeProvider.themeColor;
+    // 设置状态栏的背景颜色与顶部导航栏背景颜色保持一致
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: color,
+    ));
     return Scaffold(
       appBar: WidgetUtils.getMyPageAppBar(
         (MediaQuery.of(context).padding.top),

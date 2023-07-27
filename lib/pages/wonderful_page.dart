@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:login_sdk/util/navigator_util.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
+import 'package:provider/provider.dart';
+import '../provider/theme_provider.dart';
 import '../util/hi_dialog.dart';
 import '../util/hi_utils.dart';
 import '../widget/wonderful_item_widget.dart';
@@ -32,6 +34,12 @@ class _WonderfulPageState extends State<WonderfulPage> /*with AutomaticKeepAlive
 
   @override
   Widget build(BuildContext context) {
+    var themeProvider = context.watch<ThemeProvider>();
+    var color = themeProvider.themeColor;
+    // 设置状态栏的背景颜色与顶部导航栏背景颜色保持一致
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: color,
+    ));
     return Scaffold(
         appBar: WidgetUtils.getCustomAppBar('精彩内容', titleCenter: true),
         body: ListView.builder(
@@ -105,7 +113,7 @@ class _WonderfulPageState extends State<WonderfulPage> /*with AutomaticKeepAlive
   _onCopy(FavoriteModel model) async {
     await Clipboard.setData(ClipboardData(text: model.content));
     if (!mounted) return;
-    HiUtils.copyMessage(context, '文本已复制到系统剪切板');
+    HiUtils.copyMessage(context, model.content);
   }
 
   _onShare(FavoriteModel model) {

@@ -6,8 +6,11 @@ import 'package:chatgpt_flutter/models/conversation_model.dart';
 import 'package:chatgpt_flutter/util/constants.dart';
 import 'package:chatgpt_flutter/util/widget_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:login_sdk/util/navigator_util.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
+import 'package:provider/provider.dart';
+import '../provider/theme_provider.dart';
 import '../widget/conversation_item_widget.dart';
 import 'conversation_page.dart';
 
@@ -89,6 +92,12 @@ class _ConversationListPageState extends State<ConversationListPage> with Automa
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    var themeProvider = context.watch<ThemeProvider>();
+    var color = themeProvider.themeColor;
+    // 设置状态栏的背景颜色与顶部导航栏背景颜色保持一致
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: color,
+    ));
     return Scaffold(
       appBar: WidgetUtils.getCustomAppBar('ChatGPT', titleCenter: true),
       body: _listView,
