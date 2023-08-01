@@ -38,8 +38,8 @@ class WidgetUtils {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(userName, style: const TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold)),
-                    Text("用户ID：$userId", style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                    Text(userName, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+                    Text("用户ID：$userId", style: const TextStyle(color: Colors.white, fontSize: 12)),
                   ],
                 )
               ],

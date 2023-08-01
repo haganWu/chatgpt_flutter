@@ -63,10 +63,8 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
   @override
   Widget build(BuildContext context) {
     // ios刘海屏，底部有间距
-    var bottom = MediaQuery.of(context).padding.bottom + 6;
     return Container(
-      height: 44,
-      padding: EdgeInsets.only(left: 12, right: 12, top: 6, bottom: bottom),
+      padding: const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 6),
       decoration: BoxDecoration(
         color: Colors.grey.withOpacity(0.2),
       ),

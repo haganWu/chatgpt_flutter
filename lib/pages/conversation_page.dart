@@ -13,6 +13,7 @@ import 'package:chatgpt_flutter/widget/message_input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:login_sdk/dao/login_dao.dart';
+import 'package:login_sdk/util/padding_extension.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import 'package:provider/provider.dart';
 import '../db/favorite_dao.dart';
@@ -118,6 +119,7 @@ class _ConversationPageState extends State<ConversationPage> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: color,
     ));
+    var bottom = MediaQuery.of(context).padding.bottom;
     return Scaffold(
       appBar: WidgetUtils.getCustomAppBar(_title),
       body: Column(
@@ -125,6 +127,7 @@ class _ConversationPageState extends State<ConversationPage> {
           _chatList,
           const SizedBox(height: 6),
           _inputWidget(),
+          bottom.paddingHeight,
         ],
       ),
     );
