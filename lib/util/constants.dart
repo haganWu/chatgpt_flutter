@@ -12,7 +12,9 @@ class Constants {
 
 
   /// ChatGPT apiKey
-  static String apiKey = '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';
-  /// 代理
-  static String keyHiProxy = '10.1.37.160:7890';
+  static String apiKey = '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';
+  ///Android代理
+  static String keyHiProxyAndroid = '10.1.37.84:56288';
+  /// IOS代理
+  static String keyHiProxyIOS = '127.0.0.1:7890';
 }

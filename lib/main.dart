@@ -2,6 +2,7 @@ import 'package:chatgpt_flutter/pages/bottom_navigator.dart';
 import 'package:chatgpt_flutter/provider/hi_provider.dart';
 import 'package:chatgpt_flutter/provider/theme_provider.dart';
 import 'package:chatgpt_flutter/util/constants.dart';
+import 'package:chatgpt_flutter/util/hi_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hi_cache/flutter_hi_cache.dart';
 import 'package:login_sdk/dao/login_dao.dart';
@@ -27,18 +28,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String proxy =  HiUtils.getPoxyByPlatform(context);
     return FutureBuilder<void>(
-      future: doInit(),
+      future: doInit(proxy),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         Widget widget;
         if (snapshot.connectionState == ConnectionState.done) {
-          widget = LoginDao.getBoardingPass() == null ? const LoginPage() : const BottomNavigator();
+          widget = LoginDao.getBoardingPass() == null
+              ? const LoginPage()
+              : const BottomNavigator();
         } else {
           return _loadingPage;
         }
         return MultiProvider(
           providers: mainProviders,
-          child: Consumer<ThemeProvider>(builder: (BuildContext context, ThemeProvider themeProvider, Widget? child) {
+          child: Consumer<ThemeProvider>(builder: (BuildContext context,
+              ThemeProvider themeProvider, Widget? child) {
             return MaterialApp(
               home: widget,
               theme: themeProvider.getTheme(),
@@ -50,9 +55,9 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Future<void> doInit() async {
+  Future<void> doInit(String proxy) async {
     await LoginConfig.instance().init(homePage: const BottomNavigator());
     await HiCache.preInit();
-    AiConfigBuilder.init(apiKey: Constants.apiKey, proxy: Constants.keyHiProxy);
+    AiConfigBuilder.init(apiKey: Constants.apiKey, proxy: proxy);
   }
 }
