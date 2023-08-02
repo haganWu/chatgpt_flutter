@@ -25,8 +25,7 @@ class WidgetUtils {
       preferredSize: const Size.fromHeight(90),
       child: Container(
         decoration: BoxDecoration(color: color),
-        padding: const EdgeInsets.only(left: 8, top: 12, right: 8, bottom: 20),
-        margin: EdgeInsets.only(top: statusHeight),
+        padding: EdgeInsets.only(left: 8, top: (12 + statusHeight), right: 8, bottom: 20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
