@@ -28,22 +28,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String proxy =  HiUtils.getPoxyByPlatform(context);
+    String proxy = HiUtils.getPoxyByPlatform(context);
     return FutureBuilder<void>(
       future: doInit(proxy),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         Widget widget;
         if (snapshot.connectionState == ConnectionState.done) {
-          widget = LoginDao.getBoardingPass() == null
-              ? const LoginPage()
-              : const BottomNavigator();
+          widget = LoginDao.getBoardingPass() == null ? const LoginPage() : const BottomNavigator();
         } else {
           return _loadingPage;
         }
         return MultiProvider(
           providers: mainProviders,
-          child: Consumer<ThemeProvider>(builder: (BuildContext context,
-              ThemeProvider themeProvider, Widget? child) {
+          child: Consumer<ThemeProvider>(builder: (BuildContext context, ThemeProvider themeProvider, Widget? child) {
             return MaterialApp(
               home: widget,
               theme: themeProvider.getTheme(),

@@ -6,7 +6,7 @@ import 'package:login_sdk/dao/login_dao.dart';
 import 'package:login_sdk/util/padding_extension.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import 'package:provider/provider.dart';
-import '../util/widget_utils.dart';
+import '../widget/header_widget.dart';
 
 /// 我的页面
 class MyPage extends StatefulWidget {
@@ -34,19 +34,27 @@ class _MyPageState extends State<MyPage> {
       statusBarColor: color,
     ));
     return Scaffold(
-      appBar: WidgetUtils.getMyPageAppBar(
-        (MediaQuery.of(context).padding.top),
-        color,
-        userInfo?['avatar'],
-        userInfo?['userName'],
-        userInfo?['imoocId'],
-        _logout,
-      ),
+      // appBar: WidgetUtils.getMyPageAppBar(
+      //   (MediaQuery.of(context).padding.top),
+      //   color,
+      //   userInfo?['avatar'],
+      //   userInfo?['userName'],
+      //   userInfo?['imoocId'],
+      //   _logout,
+      // ),
       body: Column(
         children: [
-          _genItem(title: "检查更新", icon: Icons.update,color:color, onClick: onCheckUpdate),
-          _genItem(title: "设置代理", icon: Icons.wifi_tethering_error,color:color, onClick: onSetAgency),
-          _genItem(title: "设置主题", subTitle: "请选择你喜欢的主题",color:color, onClick: onSetTheme),
+          HeaderWidget(
+            avatar: userInfo?['avatar'],
+            userName: userInfo?['userName'],
+            userId: userInfo?['imoocId'],
+            paddingTop: (MediaQuery.of(context).padding.top),
+            backgroundColor: color,
+            clickCallback: _logout,
+          ),
+          _genItem(title: "检查更新", icon: Icons.update, color: color, onClick: onCheckUpdate),
+          _genItem(title: "设置代理", icon: Icons.wifi_tethering_error, color: color, onClick: onSetAgency),
+          _genItem(title: "设置主题", subTitle: "请选择你喜欢的主题", color: color, onClick: onSetTheme),
         ],
       ),
     );
@@ -57,7 +65,7 @@ class _MyPageState extends State<MyPage> {
     LoginDao.logout();
   }
 
-  _genItem({required String title, IconData? icon, String? subTitle,required Color color, Function? onClick}) {
+  _genItem({required String title, IconData? icon, String? subTitle, required Color color, Function? onClick}) {
     return InkWell(
       onTap: () {
         if (onClick != null) {
@@ -127,6 +135,6 @@ class _MyPageState extends State<MyPage> {
 
   void _onThemeChange(String colorStr) {
     AiLogger.log(message: 'colorStr: $colorStr', tag: "MyPage");
-    context.read<ThemeProvider>().setTheme(colorName:colorStr);
+    context.read<ThemeProvider>().setTheme(colorName: colorStr);
   }
 }

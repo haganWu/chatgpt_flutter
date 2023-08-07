@@ -43,9 +43,8 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
     ));
   }
 
-  get _sendBtn {
-    var themeProvider = context.watch<ThemeProvider>();
-    var color = themeProvider.themeColor;
+  /// 属性可携带参数
+  get _sendBtn => (color) {
    return Container(
       margin: const EdgeInsets.only(left: 10),
       decoration: BoxDecoration(
@@ -58,10 +57,13 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
         child: const Text('发送', style: TextStyle(color: Colors.white, fontSize: 12)),
       ),
     );
-  }
+  };
 
   @override
   Widget build(BuildContext context) {
+
+    var themeProvider = context.watch<ThemeProvider>();
+    var color = themeProvider.themeColor;
     // ios刘海屏，底部有间距
     return Container(
       padding: const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 6),
@@ -69,7 +71,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
         color: Colors.grey.withOpacity(0.2),
       ),
       child: Row(
-        children: [_input, if (_showSend) _sendBtn],
+        children: [_input, if (_showSend) _sendBtn(color)],
       ),
     );
   }
