@@ -1,7 +1,7 @@
-import 'package:chatgpt_flutter/util/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'hi_constants.dart';
 import 'hi_dialog.dart';
 
 class HiUtils {
@@ -16,14 +16,18 @@ class HiUtils {
     String proxy = "";
     switch (platform) {
       case TargetPlatform.android:
-        proxy = Constants.keyHiProxyAndroid;
+        proxy = HiConstants.keyHiProxyAndroid;
         break;
       case TargetPlatform.iOS:
-        proxy = Constants.keyHiProxyIOS;
+        proxy = HiConstants.keyHiProxyIOS;
         break;
       default:
         proxy = "";
     }
     return proxy;
+  }
+  /// 打开H5页面
+  static void openH5(String url) async {
+    // Uri uri =
   }
 }

@@ -3,7 +3,6 @@ import 'package:chatgpt_flutter/db/conversation_list_dao.dart';
 import 'package:chatgpt_flutter/db/hi_db_manager.dart';
 import 'package:chatgpt_flutter/db/message_dao.dart';
 import 'package:chatgpt_flutter/models/conversation_model.dart';
-import 'package:chatgpt_flutter/util/constants.dart';
 import 'package:chatgpt_flutter/util/widget_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +10,7 @@ import 'package:login_sdk/util/navigator_util.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import 'package:provider/provider.dart';
 import '../provider/theme_provider.dart';
+import '../util/hi_constants.dart';
 import '../widget/conversation_item_widget.dart';
 import 'conversation_page.dart';
 
@@ -112,7 +112,7 @@ class _ConversationListPageState extends State<ConversationListPage> with Automa
 
   void _createConversation() {
     int cid = DateTime.now().millisecondsSinceEpoch;
-    _jumpToConversation(ConversationModel(cid: cid, icon: Constants.conversationIcon));
+    _jumpToConversation(ConversationModel(cid: cid, icon: HiConstants.conversationIcon));
   }
 
   void _jumpToConversation(ConversationModel model) {

@@ -1,12 +1,15 @@
 import 'package:chatgpt_flutter/provider/theme_provider.dart';
+import 'package:chatgpt_flutter/util/hi_dialog.dart';
 import 'package:chatgpt_flutter/widget/custom_theme_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_hi_cache/flutter_hi_cache.dart';
 import 'package:login_sdk/dao/login_dao.dart';
 import 'package:login_sdk/util/padding_extension.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import 'package:provider/provider.dart';
-import '../util/widget_utils.dart';
+import '../util/hi_constants.dart';
+import '../widget/header_widget.dart';
 
 /// 我的页面
 class MyPage extends StatefulWidget {
@@ -34,19 +37,27 @@ class _MyPageState extends State<MyPage> {
       statusBarColor: color,
     ));
     return Scaffold(
-      appBar: WidgetUtils.getMyPageAppBar(
-        (MediaQuery.of(context).padding.top),
-        color,
-        userInfo?['avatar'],
-        userInfo?['userName'],
-        userInfo?['imoocId'],
-        _logout,
-      ),
+      // appBar: WidgetUtils.getMyPageAppBar(
+      //   (MediaQuery.of(context).padding.top),
+      //   color,
+      //   userInfo?['avatar'],
+      //   userInfo?['userName'],
+      //   userInfo?['imoocId'],
+      //   _logout,
+      // ),
       body: Column(
         children: [
-          _genItem(title: "检查更新", icon: Icons.update,color:color, onClick: onCheckUpdate),
-          _genItem(title: "设置代理", icon: Icons.wifi_tethering_error,color:color, onClick: onSetAgency),
-          _genItem(title: "设置主题", subTitle: "请选择你喜欢的主题",color:color, onClick: onSetTheme),
+          HeaderWidget(
+            avatar: userInfo?['avatar'],
+            userName: userInfo?['userName'],
+            userId: userInfo?['imoocId'],
+            paddingTop: (MediaQuery.of(context).padding.top),
+            backgroundColor: color,
+            clickCallback: _logout,
+          ),
+          _genItem(title: "检查更新", icon: Icons.update, color: color, onClick: onCheckUpdate),
+          _genItem(title: "设置代理", icon: Icons.wifi_tethering_error, color: color, onClick: onSetAgency),
+          _genItem(title: "设置主题", subTitle: "请选择你喜欢的主题", color: color, onClick: onSetTheme),
         ],
       ),
     );
@@ -57,7 +68,7 @@ class _MyPageState extends State<MyPage> {
     LoginDao.logout();
   }
 
-  _genItem({required String title, IconData? icon, String? subTitle,required Color color, Function? onClick}) {
+  _genItem({required String title, IconData? icon, String? subTitle, required Color color, Function? onClick}) {
     return InkWell(
       onTap: () {
         if (onClick != null) {
@@ -105,8 +116,10 @@ class _MyPageState extends State<MyPage> {
     AiLogger.log(message: "检查更新", tag: "MyPage");
   }
 
-  onSetAgency() {
-    AiLogger.log(message: "设置代理", tag: "MyPage");
+  onSetAgency() async {
+    var cacheProxy = HiCache.getInstance().get(HiConstants.keyHiProxy);
+    AiLogger.log(message: "设置代理-$cacheProxy", tag: "MyPage");
+   var isSave = await HiDialog.showProxySettingDialog(context,proxyText: cacheProxy,onTap: _openH5);
   }
 
   onSetTheme() {
@@ -127,6 +140,10 @@ class _MyPageState extends State<MyPage> {
 
   void _onThemeChange(String colorStr) {
     AiLogger.log(message: 'colorStr: $colorStr', tag: "MyPage");
-    context.read<ThemeProvider>().setTheme(colorName:colorStr);
+    context.read<ThemeProvider>().setTheme(colorName: colorStr);
+  }
+
+  void _openH5() {
+    AiLogger.log(message: "打开设置说明H5", tag: "MyPage");
   }
 }
