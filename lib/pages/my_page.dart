@@ -1,11 +1,14 @@
 import 'package:chatgpt_flutter/provider/theme_provider.dart';
+import 'package:chatgpt_flutter/util/hi_dialog.dart';
 import 'package:chatgpt_flutter/widget/custom_theme_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_hi_cache/flutter_hi_cache.dart';
 import 'package:login_sdk/dao/login_dao.dart';
 import 'package:login_sdk/util/padding_extension.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import 'package:provider/provider.dart';
+import '../util/hi_constants.dart';
 import '../widget/header_widget.dart';
 
 /// 我的页面
@@ -113,8 +116,10 @@ class _MyPageState extends State<MyPage> {
     AiLogger.log(message: "检查更新", tag: "MyPage");
   }
 
-  onSetAgency() {
-    AiLogger.log(message: "设置代理", tag: "MyPage");
+  onSetAgency() async {
+    var cacheProxy = HiCache.getInstance().get(HiConstants.keyHiProxy);
+    AiLogger.log(message: "设置代理-$cacheProxy", tag: "MyPage");
+   var isSave = await HiDialog.showProxySettingDialog(context,proxyText: cacheProxy,onTap: _openH5);
   }
 
   onSetTheme() {
@@ -136,5 +141,9 @@ class _MyPageState extends State<MyPage> {
   void _onThemeChange(String colorStr) {
     AiLogger.log(message: 'colorStr: $colorStr', tag: "MyPage");
     context.read<ThemeProvider>().setTheme(colorName: colorStr);
+  }
+
+  void _openH5() {
+    AiLogger.log(message: "打开设置说明H5", tag: "MyPage");
   }
 }

@@ -1,7 +1,7 @@
 import 'package:chatgpt_flutter/pages/bottom_navigator.dart';
 import 'package:chatgpt_flutter/provider/hi_provider.dart';
 import 'package:chatgpt_flutter/provider/theme_provider.dart';
-import 'package:chatgpt_flutter/util/constants.dart';
+import 'package:chatgpt_flutter/util/hi_constants.dart';
 import 'package:chatgpt_flutter/util/hi_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hi_cache/flutter_hi_cache.dart';
@@ -55,6 +55,6 @@ class MyApp extends StatelessWidget {
   Future<void> doInit(String proxy) async {
     await LoginConfig.instance().init(homePage: const BottomNavigator());
     await HiCache.preInit();
-    AiConfigBuilder.init(apiKey: Constants.apiKey, proxy: proxy);
+    AiConfigBuilder.init(apiKey: HiConstants.apiKey, proxy: proxy);
   }
 }

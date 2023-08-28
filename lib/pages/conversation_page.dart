@@ -18,7 +18,7 @@ import 'package:openai_flutter/utils/ai_logger.dart';
 import 'package:provider/provider.dart';
 import '../db/favorite_dao.dart';
 import '../provider/theme_provider.dart';
-import '../util/constants.dart';
+import '../util/hi_constants.dart';
 import '../util/hi_utils.dart';
 
 typedef OnConversationUpdate = void Function(ConversationModel model);
@@ -179,8 +179,8 @@ class _ConversationPageState extends State<ConversationPage> {
       avatar = userInfo['avatar'];
       ownerName = userInfo['userName'];
     } else {
-      avatar = Constants.chatGPTIcon;
-      ownerName = Constants.chatGPTName;
+      avatar = HiConstants.chatGPTIcon;
+      ownerName = HiConstants.chatGPTName;
     }
 
     return MessageModel(
