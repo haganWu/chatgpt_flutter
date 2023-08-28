@@ -50,7 +50,7 @@ class HiDialog {
             onChanged: (text) => proxyText = text,
           ),
           contentPadding: const EdgeInsets.all(8),
-          contentTextStyle: const TextStyle(color: Colors.black54, fontSize: 12),
+          contentTextStyle: const TextStyle(color: Colors.black54, fontSize: 14),
           actions: [
             TextButton(
                 onPressed: () {

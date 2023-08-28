@@ -28,9 +28,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String proxy = HiUtils.getPoxyByPlatform(context);
     return FutureBuilder<void>(
-      future: doInit(proxy),
+      future: doInit(context),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         Widget widget;
         if (snapshot.connectionState == ConnectionState.done) {
@@ -52,7 +51,11 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Future<void> doInit(String proxy) async {
+  Future<void> doInit(BuildContext context) async {
+    String? proxy = HiCache.getInstance().get(HiConstants.keyHiProxySaveTag);
+    if(proxy == null || proxy.isEmpty) {
+      proxy = HiUtils.getPoxyByPlatform(context);
+    }
     await LoginConfig.instance().init(homePage: const BottomNavigator());
     await HiCache.preInit();
     AiConfigBuilder.init(apiKey: HiConstants.apiKey, proxy: proxy);

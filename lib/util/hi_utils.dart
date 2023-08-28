@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'hi_constants.dart';
 import 'hi_dialog.dart';
 
@@ -28,6 +29,9 @@ class HiUtils {
   }
   /// 打开H5页面
   static void openH5(String url) async {
-    // Uri uri =
+    Uri uri = Uri.parse(url);
+    if(!await launchUrl(uri, mode: LaunchMode.externalApplication)){
+      throw '打开失败';
+    }
   }
 }

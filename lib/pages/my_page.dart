@@ -1,11 +1,13 @@
 import 'package:chatgpt_flutter/provider/theme_provider.dart';
 import 'package:chatgpt_flutter/util/hi_dialog.dart';
+import 'package:chatgpt_flutter/util/hi_utils.dart';
 import 'package:chatgpt_flutter/widget/custom_theme_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hi_cache/flutter_hi_cache.dart';
 import 'package:login_sdk/dao/login_dao.dart';
 import 'package:login_sdk/util/padding_extension.dart';
+import 'package:openai_flutter/http/ai_config.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import 'package:provider/provider.dart';
 import '../util/hi_constants.dart';
@@ -117,9 +119,26 @@ class _MyPageState extends State<MyPage> {
   }
 
   onSetAgency() async {
-    var cacheProxy = HiCache.getInstance().get(HiConstants.keyHiProxy);
+    var cacheProxy = HiCache.getInstance().get(HiConstants.keyHiProxySaveTag);
     AiLogger.log(message: "设置代理-$cacheProxy", tag: "MyPage");
-   var isSave = await HiDialog.showProxySettingDialog(context,proxyText: cacheProxy,onTap: _openH5);
+   var result = await HiDialog.showProxySettingDialog(context,proxyText: cacheProxy,onTap: _openH5);
+   // 点击取消
+    if(!result[0]){
+      return;
+    }
+    String? proxy = result[1];
+    AiConfigBuilder.instance.setProxy(proxy);
+    if(proxy == null || proxy.isEmpty) {
+      HiCache.getInstance().remove(HiConstants.keyHiProxySaveTag);
+    } else {
+      HiCache.getInstance().setString(HiConstants.keyHiProxySaveTag, proxy);
+    }
+  }
+
+  /// 打开设置说明
+  void _openH5() {
+    AiLogger.log(message: "打开设置说明H5", tag: "MyPage");
+    HiUtils.openH5(HiConstants.proxySettingDocUrl);
   }
 
   onSetTheme() {
@@ -143,7 +162,4 @@ class _MyPageState extends State<MyPage> {
     context.read<ThemeProvider>().setTheme(colorName: colorStr);
   }
 
-  void _openH5() {
-    AiLogger.log(message: "打开设置说明H5", tag: "MyPage");
-  }
 }
