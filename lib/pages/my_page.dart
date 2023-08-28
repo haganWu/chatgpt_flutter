@@ -74,13 +74,13 @@ class _MyPageState extends State<MyPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(title, style: const TextStyle(color: Colors.black87, fontSize: 12, fontWeight: FontWeight.bold)),
+                Text(title, style: const TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold)),
                 8.paddingWidth,
                 (subTitle != null && subTitle.isNotEmpty)
                     ? Expanded(
                         child: Text(
                         subTitle,
-                        style: const TextStyle(color: Colors.grey, fontSize: 8),
+                        style: const TextStyle(color: Colors.grey, fontSize: 12),
                         textAlign: TextAlign.start,
                       ))
                     : Container(),
