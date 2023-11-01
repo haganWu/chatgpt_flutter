@@ -199,8 +199,11 @@ class _ConversationPageState extends State<ConversationPage> {
       pageIndex = 1;
     }
     var list = await messageDao.getMessages(pageIndex: pageIndex, pageSize: 10);
+    // var list = await messageDao.getMessages(pageIndex: pageIndex, pageSize: 10*10000);
     AiLogger.log(message: 'count: ${list.length}', tag: 'ConversationPage');
     AiLogger.log(message: '_loadAll: ${jsonEncode(list)}', tag: 'ConversationPage');
+    // print('count:${list.length}');
+    // print(jsonEncode(list));
     if (loadMore) {
       if (list.isNotEmpty) {
         chatController.loadMoreData(list);
