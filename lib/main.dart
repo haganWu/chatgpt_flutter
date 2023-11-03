@@ -5,6 +5,7 @@ import 'package:chatgpt_flutter/util/hi_constants.dart';
 import 'package:chatgpt_flutter/util/hi_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hi_cache/flutter_hi_cache.dart';
+import 'package:flutter_splash_screen/flutter_splash_screen.dart';
 import 'package:login_sdk/dao/login_dao.dart';
 import 'package:login_sdk/login_sdk.dart';
 import 'package:login_sdk/pages/login_page.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
   }
 
   Future<void> doInit(BuildContext context) async {
+    // hideSplashScreen();
     String? proxy = HiCache.getInstance().get(HiConstants.keyHiProxySaveTag);
     if(proxy == null || proxy.isEmpty) {
       proxy = HiUtils.getPoxyByPlatform(context);
