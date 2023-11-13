@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatgpt_flutter/dao/notice_dao.dart';
 import 'package:chatgpt_flutter/models/notice_model.dart';
 import 'package:chatgpt_flutter/util/hi_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:openai_flutter/utils/ai_logger.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/theme_provider.dart';
@@ -52,14 +54,20 @@ class _StudyPageState extends State<StudyPage> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Card(
-          child: Image.network(model.cover, height: 190, fit: BoxFit.fill),
+          child: CachedNetworkImage(imageUrl: model.cover, height: 190, fit: BoxFit.fill),
         ),
       ),
     );
   }
 
   void _loadData() async {
-    var mo = await NoticeDao.noticeList();
+    var mo = await NoticeDao.noticeList(
+        hitCache: (NoticeModel model) => {
+              AiLogger.log(message: 'hiCache-${DateTime.now().millisecondsSinceEpoch}'),
+              setState(() {
+                noticeList = model.list!;
+              })
+            });
     setState(() {
       noticeList = mo.list;
     });

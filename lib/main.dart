@@ -1,3 +1,4 @@
+import 'package:chatgpt_flutter/dao/hi_api_cache.dart';
 import 'package:chatgpt_flutter/pages/bottom_navigator.dart';
 import 'package:chatgpt_flutter/provider/hi_provider.dart';
 import 'package:chatgpt_flutter/provider/theme_provider.dart';
@@ -55,11 +56,12 @@ class MyApp extends StatelessWidget {
   Future<void> doInit(BuildContext context) async {
     // hideSplashScreen();
     String? proxy = HiCache.getInstance().get(HiConstants.keyHiProxySaveTag);
-    if(proxy == null || proxy.isEmpty) {
+    if (proxy == null || proxy.isEmpty) {
       proxy = HiUtils.getPoxyByPlatform(context);
     }
     await LoginConfig.instance().init(homePage: const BottomNavigator());
     await HiCache.preInit();
+    HiApiCache.init(HiCache.getInstance());
     AiConfigBuilder.init(apiKey: HiConstants.apiKey, proxy: proxy);
   }
 }
