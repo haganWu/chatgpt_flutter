@@ -15,7 +15,7 @@ class HiConstants {
 
 
   /// ChatGPT apiKey
-  static String apiKey = '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';
+  static String apiKey = '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';
   ///Android代理
   static String keyHiProxyAndroid = '10.1.37.84:56288';
   /// IOS代理

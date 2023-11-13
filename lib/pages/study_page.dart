@@ -1,3 +1,6 @@
+import 'package:chatgpt_flutter/dao/notice_dao.dart';
+import 'package:chatgpt_flutter/models/notice_model.dart';
+import 'package:chatgpt_flutter/util/hi_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +17,14 @@ class StudyPage extends StatefulWidget {
 }
 
 class _StudyPageState extends State<StudyPage> {
+  var noticeList = [];
+
+  get _listView => ListView.builder(
+        padding: const EdgeInsets.only(left: 2, right: 2),
+        itemCount: noticeList.length,
+        itemBuilder: (BuildContext context, int index) => _bannerWidget(index),
+      );
+
   @override
   Widget build(BuildContext context) {
     var themeProvider = context.watch<ThemeProvider>();
@@ -23,8 +34,34 @@ class _StudyPageState extends State<StudyPage> {
       statusBarColor: color,
     ));
     return Scaffold(
-      appBar: WidgetUtils.getCustomAppBar('学习', titleCenter: true),
-      body: Center(child: Text('学习页面', style: TextStyle(fontSize: 30, color: color))),
+      appBar: WidgetUtils.getCustomAppBar('精彩课程', titleCenter: true),
+      body: _listView,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  _bannerWidget(int index) {
+    BannerMo model = noticeList[index];
+    return InkWell(
+      onTap: () => HiUtils.openH5(model.url),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Card(
+          child: Image.network(model.cover, height: 190, fit: BoxFit.fill),
+        ),
+      ),
+    );
+  }
+
+  void _loadData() async {
+    var mo = await NoticeDao.noticeList();
+    setState(() {
+      noticeList = mo.list;
+    });
   }
 }
