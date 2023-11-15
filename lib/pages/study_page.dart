@@ -4,6 +4,7 @@ import 'package:chatgpt_flutter/models/notice_model.dart';
 import 'package:chatgpt_flutter/util/hi_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lottie/lottie.dart';
 import 'package:openai_flutter/utils/ai_logger.dart';
 import 'package:provider/provider.dart';
 
@@ -30,8 +31,9 @@ class _StudyPageState extends State<StudyPage> {
   get _body => noticeList.isEmpty ? _loading : _listView;
 
   get _loading => Center(
-    child: Image.asset('assets/images/loading.gif',height: 200,width: 200,),
-  );
+        // child: Image.asset('assets/images/loading.gif',height: 200,width: 200,),
+        child: Lottie.asset('assets/lottie/loading.json.zip'),
+      );
 
   @override
   Widget build(BuildContext context) {
