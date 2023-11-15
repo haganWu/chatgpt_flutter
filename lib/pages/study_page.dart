@@ -27,6 +27,12 @@ class _StudyPageState extends State<StudyPage> {
         itemBuilder: (BuildContext context, int index) => _bannerWidget(index),
       );
 
+  get _body => noticeList.isEmpty ? _loading : _listView;
+
+  get _loading => Center(
+    child: Image.asset('assets/images/loading.gif',height: 200,width: 200,),
+  );
+
   @override
   Widget build(BuildContext context) {
     var themeProvider = context.watch<ThemeProvider>();
@@ -37,7 +43,7 @@ class _StudyPageState extends State<StudyPage> {
     ));
     return Scaffold(
       appBar: WidgetUtils.getCustomAppBar('精彩课程', titleCenter: true),
-      body: _listView,
+      body: _body,
     );
   }
 
